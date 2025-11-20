@@ -1,0 +1,123 @@
+/* Base Styles - Reset + Global Typography */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: radial-gradient(circle at 50% 45%, #2a3a56 0%, #10141c 60%, #0b0f15 100%);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+[data-theme="light"] html {
+  background: linear-gradient(135deg, #FDFBEE 0%, rgba(253, 251, 238, 0.98) 50%, rgba(250, 248, 235, 0.95) 100%);
+}
+
+[data-theme="light"] body {
+  background: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+/* Text Clamping Utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Focus Ring Utility */
+.focus-ring {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Ensure focus is visible */
+*:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Remove default button styles where needed */
+button {
+  font-family: inherit;
+}
+
+/* SVG Icons - Inherit color */
+svg {
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* Override Bootstrap Button Colors */
+.btn-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+  backdrop-filter: blur(6px);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-text);
+}
+
+.btn-outline-primary {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background-color: transparent;
+  backdrop-filter: blur(6px);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+[data-theme="light"] .btn-primary {
+  color: #FDFBEE;
+}
+
+[data-theme="light"] .btn-outline-primary:hover,
+[data-theme="light"] .btn-outline-primary:focus,
+[data-theme="light"] .btn-outline-primary:active {
+  color: #FDFBEE;
+}
+
+/* Ensure buttons use theme colors */
+.btn-primary:not(:disabled):not(.disabled):active,
+.btn-primary:not(:disabled):not(.disabled).active {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: #000000;
+}
+
+/* Override Bootstrap text-muted to use theme colors */
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+

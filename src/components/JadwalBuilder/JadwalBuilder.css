@@ -1,0 +1,201 @@
+.jadwal-builder {
+  padding: 2rem 0;
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+.jadwal-builder__header {
+  margin-bottom: 2rem;
+}
+
+.jadwal-builder__name-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.2s ease;
+  backdrop-filter: blur(6px);
+}
+
+.jadwal-builder__name-input:focus {
+  border-color: var(--color-primary);
+}
+
+.jadwal-builder__name-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.jadwal-builder__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.jadwal-builder__days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.jadwal-builder__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.jadwal-builder__day-wrapper {
+  position: relative;
+}
+
+.jadwal-builder__day-btn {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(6px);
+}
+
+.jadwal-builder__day-btn:hover {
+  border-color: var(--color-primary);
+}
+
+.jadwal-builder__day-btn.is-active {
+  background: var(--color-primary);
+  color: var(--color-text);
+  border-color: var(--color-primary);
+}
+
+[data-theme="light"] .jadwal-builder__day-btn.is-active {
+  color: #FDFBEE;
+}
+
+
+.jadwal-builder__day-delete {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+.jadwal-builder__day-delete:hover {
+  background: #ff4444;
+  border-color: #ff4444;
+  color: #fff;
+}
+
+.jadwal-builder__add-day-btn {
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.5rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jadwal-builder__add-day-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.jadwal-builder__delete-confirm {
+  padding: 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(6px);
+}
+
+.jadwal-builder__delete-confirm p {
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.jadwal-builder__delete-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.jadwal-builder__content {
+  margin-top: 2rem;
+}
+
+.jadwal-builder__empty {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.jadwal-builder__empty-message {
+  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.jadwal-builder__exercises-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.jadwal-builder__exercises-header h3 {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.jadwal-builder__exercise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 576px) {
+  .jadwal-builder {
+    padding: 1rem 0;
+  }
+
+  .jadwal-builder__name-input {
+    font-size: 1.25rem;
+  }
+
+  .jadwal-builder__exercises-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+

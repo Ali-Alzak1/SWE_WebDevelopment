@@ -1,0 +1,180 @@
+:root {
+  --card-w: 360px;
+  --radius: 18px;
+  --glass: var(--color-glass);
+  --stroke: var(--color-stroke);
+  --text: var(--color-text);
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+.auth-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 50% 45%, #2a3a56 0%, #10141c 60%, #0b0f15 100%);
+}
+
+[data-theme="light"] .auth-screen {
+  background: linear-gradient(135deg, #FDFBEE 0%, rgba(253, 251, 238, 0.98) 50%, rgba(250, 248, 235, 0.95) 100%);
+}
+
+.auth-card {
+  position: relative;
+  width: min(var(--card-w), 92vw);
+  padding: 22px 20px 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--stroke);
+  background: linear-gradient(180deg, var(--color-glass), rgba(255, 255, 255, 0.03));
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+}
+
+.back-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: var(--glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--text);
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.title {
+  margin: 28px 0 18px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+}
+
+.field {
+  position: relative;
+}
+
+.field input {
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  padding: 0 44px 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--glass);
+  color: var(--text);
+  outline: none;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.2s ease;
+}
+
+.field input:focus {
+  border-color: var(--color-primary);
+}
+
+.field input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.field .icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.85;
+  pointer-events: none;
+  color: var(--text);
+}
+
+.primary-btn {
+  margin: 6px auto 0;
+  height: 44px;
+  width: 60%;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--color-primary);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.primary-btn .btn-text {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.meta {
+  margin-top: 14px;
+  text-align: center;
+  color: var(--text);
+}
+
+.meta .hint {
+  margin: 6px 0;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #bcd3ff;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+[data-theme="light"] .link-btn {
+  color: var(--color-primary);
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+.meta a {
+  color: #bcd3ff;
+  text-decoration: none;
+}
+
+[data-theme="light"] .meta a {
+  color: var(--color-primary);
+}
+
+.meta a:hover {
+  text-decoration: underline;
+}
+
