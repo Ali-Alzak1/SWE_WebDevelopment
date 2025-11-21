@@ -27,13 +27,9 @@
 .search-input-group {
     border-radius: var(--radius-2xl);
     overflow: hidden;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
 }
 .search-icon {
-    background-color: transparent;
     border: none;
-    color: var(--color-text-muted);
     padding-left: var(--spacing-lg);
   }
 

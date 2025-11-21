@@ -1,12 +1,9 @@
 .vault {
   padding: 3rem 0 4rem;
-  color: var(--color-text);
   min-height: 100vh;
-  background: radial-gradient(circle at 50% 45%, #2a3a56 0%, #10141c 60%, #0b0f15 100%);
 }
 
 [data-theme="light"] .vault {
-  background: linear-gradient(135deg, #FDFBEE 0%, rgba(253, 251, 238, 0.98) 50%, rgba(250, 248, 235, 0.95) 100%);
 }
 
 .vault__header {
@@ -18,19 +15,16 @@
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   margin-bottom: 0.5rem;
-  color: var(--color-text);
 }
 
 .vault__subtitle {
   font-size: 1.1rem;
-  color: var(--color-text-muted);
   margin: 0;
 }
 
 .vault__empty {
   text-align: center;
   padding: 4rem 2rem;
-  color: var(--color-text-muted);
 }
 
 .vault__programs {

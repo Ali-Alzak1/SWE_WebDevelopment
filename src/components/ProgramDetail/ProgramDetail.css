@@ -1,6 +1,5 @@
 .program-detail {
   padding: 2rem 0;
-  color: var(--color-text);
   min-height: 100vh;
 }
 
@@ -13,26 +12,18 @@
   padding: 1rem;
   font-size: 1.5rem;
   font-weight: 600;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  color: var(--color-text);
   outline: none;
-  transition: border-color 0.2s ease;
-  backdrop-filter: blur(6px);
 }
 
 .program-detail__name-input:focus {
-  border-color: var(--color-primary);
 }
 
 .program-detail__name-input:read-only {
-  background: var(--color-bg);
   cursor: default;
 }
 
 .program-detail__name-input::placeholder {
-  color: var(--color-text-muted);
 }
 
 .program-detail__toolbar {
@@ -42,7 +33,6 @@
   gap: 1.5rem;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
   flex-wrap: wrap;
 }
 
@@ -55,28 +45,19 @@
 
 .program-detail__day-btn {
   padding: 0.75rem 1.25rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
-  color: var(--color-text);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  backdrop-filter: blur(6px);
 }
 
 .program-detail__day-btn:hover {
-  border-color: var(--color-primary);
 }
 
 .program-detail__day-btn.is-active {
-  background: var(--color-primary);
-  color: var(--color-text);
-  border-color: var(--color-primary);
 }
 
 [data-theme="light"] .program-detail__day-btn.is-active {
-  color: #FDFBEE;
 }
 
 .program-detail__actions {
@@ -98,7 +79,6 @@
 .program-detail__empty {
   text-align: center;
   padding: 3rem 1rem;
-  color: var(--color-text-muted);
 }
 
 @media (max-width: 768px) {

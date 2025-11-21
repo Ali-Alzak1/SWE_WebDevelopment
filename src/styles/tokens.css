@@ -1,18 +1,5 @@
 /* Design Tokens - Dark Theme Default (Navy Dark) */
 :root {
-  /* Colors - Dark Theme (Navy Dark with transparency) */
-  --color-bg: #0b0f15;
-  --color-surface: rgba(29, 84, 108, 0.3); /* #1D546C with transparency */
-  --color-primary: #1D546C;
-  --color-primary-hover: #2a6b87;
-  --color-secondary: #57B4BA;
-  --color-text: #e9eef6;
-  --color-text-muted: #a8b3c7;
-  --color-border: rgba(255, 255, 255, 0.18);
-  --color-muted: #a8b3c7;
-  --color-focus-ring: #1D546C;
-  --color-glass: rgba(255, 255, 255, 0.06);
-  --color-stroke: rgba(255, 255, 255, 0.18);
   
   /* Spacing (Bootstrap handles most, but tokens for consistency) */
   --spacing-xs: 0.25rem;
@@ -29,9 +16,6 @@
   --radius-2xl: 1.5rem;
   
   /* Shadows */
-  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.35);
-  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --shadow-strong: 0 12px 32px rgba(0, 0, 0, 0.45);
   
   /* Transitions */
   --transition-fast: 150ms ease;
@@ -41,20 +25,5 @@
 
 /* Light Theme */
 [data-theme="light"] {
-  --color-bg: #FDFBEE;
-  --color-surface: rgba(87, 180, 186, 0.12); /* #57B4BA with transparency */
-  --color-primary: #57B4BA;
-  --color-primary-hover: #4a9fa5;
-  --color-secondary: #1D546C;
-  --color-text: #1a2528;
-  --color-text-muted: #6b7c85;
-  --color-border: rgba(42, 58, 86, 0.15);
-  --color-muted: #8a9ba3;
-  --color-focus-ring: #57B4BA;
-  --color-glass: rgba(87, 180, 186, 0.08);
-  --color-stroke: rgba(42, 58, 86, 0.15);
-  --shadow-soft: 0 4px 12px rgba(87, 180, 186, 0.12);
-  --shadow-medium: 0 8px 24px rgba(87, 180, 186, 0.18);
-  --shadow-strong: 0 12px 32px rgba(87, 180, 186, 0.22);
 }
 

@@ -24,34 +24,24 @@
 .guest-home__search-input-group {
   border-radius: var(--radius-2xl);
   overflow: hidden;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
 }
 
 .guest-home__search-icon {
-  background-color: transparent;
   border: none;
-  color: var(--color-text-muted);
   padding-left: var(--spacing-lg);
 }
 
 .guest-home__search-input {
-  background-color: transparent;
   border: none;
-  color: var(--color-text);
   padding: var(--spacing-md) var(--spacing-lg);
   font-size: 1rem;
 }
 
 .guest-home__search-input:focus {
-  background-color: transparent;
   border: none;
-  box-shadow: none;
-  color: var(--color-text);
 }
 
 .guest-home__search-input::placeholder {
-  color: var(--color-text-muted);
 }
 
 .guest-home__auth-buttons {

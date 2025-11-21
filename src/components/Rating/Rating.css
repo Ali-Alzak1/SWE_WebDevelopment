@@ -1,16 +1,13 @@
 /* Rating Component Styles */
 .rating {
   padding: var(--spacing-lg);
-  background-color: var(--color-surface);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--color-border);
 }
 
 .rating__label {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: var(--spacing-lg);
-  color: var(--color-text);
   text-align: center;
 }
 
@@ -24,11 +21,9 @@
 }
 
 .rating__star {
-  background: transparent;
   border: none;
   padding: var(--spacing-xs);
   cursor: pointer;
-  color: var(--color-text-muted);
   transition: all var(--transition-base);
   display: flex;
   align-items: center;
@@ -38,43 +33,30 @@
 }
 
 [data-theme="light"] .rating__star {
-  color: #c4d0d8;
 }
 
-/* All filled stars should be colored with primary color */
-.rating__star--filled {
-  color: var(--color-primary);
 }
 
-[data-theme="light"] .rating__star--filled {
-  color: #57B4BA;
 }
 
 .rating__star:hover {
-  color: var(--color-primary);
   transform: scale(1.1);
 }
 
 [data-theme="light"] .rating__star:hover {
-  color: #57B4BA;
 }
 
 .rating__star:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
-  color: var(--color-primary);
 }
 
 [data-theme="light"] .rating__star:focus-visible {
-  color: #57B4BA;
 }
 
 .rating__star--selected {
-  color: var(--color-primary);
 }
 
 [data-theme="light"] .rating__star--selected {
-  color: #57B4BA;
 }
 
 .rating__star svg {
@@ -93,53 +75,31 @@
   font-weight: 500;
   min-width: 120px;
   transition: all var(--transition-base);
-  /* Default disabled state - matches surface color */
-  background-color: var(--color-surface);
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
 }
 
 .rating__submit:not(:disabled) {
-  /* Only apply primary color when enabled (rating selected) */
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-text);
 }
 
 [data-theme="light"] .rating__submit:not(:disabled) {
-  color: #FDFBEE;
 }
 
 .rating__submit:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-soft);
-  color: var(--color-text);
 }
 
 [data-theme="light"] .rating__submit:hover:not(:disabled) {
-  color: #FDFBEE;
 }
 
 .rating__submit:focus-visible:not(:disabled) {
-  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--color-text);
 }
 
 [data-theme="light"] .rating__submit:focus-visible:not(:disabled) {
-  color: #FDFBEE;
 }
 
 .rating__submit:disabled {
   opacity: 1;
   cursor: not-allowed;
-  background-color: var(--color-surface);
-  border-color: var(--color-border);
-  color: var(--color-text-muted);
 }
 
 /* Size Variants */
