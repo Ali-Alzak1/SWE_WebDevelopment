@@ -41,9 +41,6 @@
   border: none;
 }
 
-.guest-home__search-input::placeholder {
-}
-
 .guest-home__auth-buttons {
   display: flex;
   gap: var(--spacing-md);

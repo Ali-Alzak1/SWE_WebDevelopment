@@ -14,6 +14,7 @@ import AdminLogin from './components/AdminLogin/AdminLogin';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/auth.css';
+import './styles/colorPalette.css';
 
 
 // Dummy data for demonstration - updated to match built-in program structure

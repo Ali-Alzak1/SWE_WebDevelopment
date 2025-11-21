@@ -65,7 +65,7 @@ const SearchRow = ({
     <div className="guest-home__auth-buttons">
       <button
         type="button"
-        className="btn btn-outline-primary btn-lg guest-home__theme-toggle"
+        className="guest-home__button guest-home__button--outline guest-home__theme-toggle"
         onClick={onThemeToggle}
         aria-label="Toggle theme"
         title="Toggle dark/light mode"
@@ -74,7 +74,7 @@ const SearchRow = ({
       </button>
       <button
         type="button"
-        className="btn btn-outline-primary btn-lg guest-home__auth-btn"
+        className="guest-home__button guest-home__button--outline guest-home__auth-btn"
         aria-label="Login to your account"
         onClick={onLoginClick}
       >
@@ -82,7 +82,7 @@ const SearchRow = ({
       </button>
       <button
         type="button"
-        className="btn btn-primary btn-lg guest-home__auth-btn"
+        className="guest-home__button guest-home__button--solid guest-home__auth-btn"
         aria-label="Sign up for a new account"
         onClick={onSignUpClick}
       >
