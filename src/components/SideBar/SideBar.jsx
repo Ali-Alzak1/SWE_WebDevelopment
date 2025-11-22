@@ -254,7 +254,7 @@ const SideBar = ({
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title" id="sidebar-label">
-              Navigation
+              
             </h5>
             <button
               type="button"
