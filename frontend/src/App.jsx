@@ -16,6 +16,7 @@ import './styles/base.css';
 import './styles/auth.css';
 import './styles/colorPalette.css';
 
+
 // Backend URL / port configuration
 // Define in frontend/.env, e.g.:
 // VITE_BACKEND_PORT=7000

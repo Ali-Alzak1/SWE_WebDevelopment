@@ -73,70 +73,118 @@ const userSchema = new mongoose.Schema({
 });
 
 
+// ============================================
+// Program info module (days / exercises / sets)
+// Matches the structure used in App.jsx templates
+// ============================================
+
+const setSchema = new mongoose.Schema(
+  {
+    id: { type: Number, required: true },
+    weight: { type: String, default: "" },
+    reps: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
+const exerciseSchema = new mongoose.Schema(
+  {
+    id: { type: Number, required: true },
+    name: { type: String, required: true },
+    muscle: { type: String, required: true },
+    unit: { type: String, default: "KG" },
+    sets: { type: [setSchema], default: [] },
+    notes: { type: String, default: "" },
+  },
+  { _id: false }
+);
+
+const daySchema = new mongoose.Schema(
+  {
+    id: { type: Number, required: true },
+    exercises: { type: [exerciseSchema], default: [] },
+  },
+  { _id: false }
+);
+
+const programInfoSchema = new mongoose.Schema(
+  {
+    days: { type: [daySchema], default: [] },
+  },
+  { _id: false }
+);
+
+
 const programSchema = new mongoose.Schema(
-    {
-        // Mongoose will create _id automatically as ObjectId
+  {
+    // Mongoose will create _id automatically as ObjectId
 
-        // Basic Metadata
-        title: {
-            type: String,
-            required: true,
-        },
-        shortLabel: {
-            type: String,
-        },
-        summary: {
-            type: String,
-        },
-        description: {
-            type: String,
-        },
-
-        // Categorization
-        tags: [
-            {
-                type: String,
-            },
-        ], // Array of strings
-        durationHint: {
-            type: String,
-        },
-
-        // Distinction Logic (Crucial for your data)
-        type: {
-            type: String,
-            enum: ["system", "community"],
-            default: "community",
-        }, // 'system' (built-in), 'community' (user-generated)
-        isPublic: {
-            type: Boolean,
-            default: true, // If false, only the author sees it
-        },
-
-        // Relationships
-        authorId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "users", // refers to UserModel collection
-            default: null, // Null if it's a 'Built-in'
-        },
-        authorName: {
-            type: String, // Cache the name to avoid extra lookups
-        },
-
-        // Stats
-        rating: {
-            type: Number,
-            default: 0,
-        },
-        ratingCount: {
-            type: Number,
-            default: 0, // To calculate averages
-        },
+    // Basic Metadata
+    title: {
+      type: String,
+      required: true,
     },
-    {
-        // Timestamps
-        timestamps: true, // automatically adds createdAt and updatedAt
-    }
+    shortLabel: {
+      type: String,
+    },
+    summary: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+
+    // Categorization
+    tags: [
+      {
+        type: String,
+      },
+    ], // Array of strings
+    durationHint: {
+      type: String,
+    },
+
+    // Distinction Logic (Crucial for your data)
+    type: {
+      type: String,
+      enum: ["system", "community"],
+      default: "community",
+    }, // 'system' (built-in), 'community' (user-generated)
+    isPublic: {
+      type: Boolean,
+      default: true, // If false, only the author sees it
+    },
+
+    // Relationships
+    authorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users", // refers to UserModel collection
+      default: null, // Null if it's a 'Built-in'
+    },
+    authorName: {
+      type: String, // Cache the name to avoid extra lookups
+    },
+
+    // Stats
+    rating: {
+      type: Number,
+      default: 0,
+    },
+    ratingCount: {
+      type: Number,
+      default: 0, // To calculate averages
+    },
+
+    // Detailed program information (days / exercises / sets)
+    programInfo: {
+      type: programInfoSchema,
+      default: () => ({ days: [] }),
+    },
+  },
+  {
+    // Timestamps
+    timestamps: true, // automatically adds createdAt and updatedAt
+  }
 );
 
 const categorySchema = new mongoose.Schema({
@@ -165,6 +213,7 @@ app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
+
 app.get("/getUsers", async (req, res) => {
     const userData = await UserModel.find();
     res.json(userData);
@@ -179,3 +228,4 @@ app.get("/getCategories", async (req, res) => {
     const categoryData = await CategoryModel.find();
     res.json(categoryData);
 });
+
