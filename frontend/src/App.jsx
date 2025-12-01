@@ -16,253 +16,12 @@ import './styles/base.css';
 import './styles/auth.css';
 import './styles/colorPalette.css';
 
-
-// Dummy data for demonstration - updated to match built-in program structure
-const dummyPrograms = [
-  {
-    id: '1',
-    title: 'Morning Cardio Blast',
-    author: 'John Doe',
-    rating: 4.5,
-    summary: 'Start your day with high-energy cardio workouts designed to boost metabolism and improve cardiovascular health.',
-    shortLabel: 'Cardio',
-    durationHint: '3-5 days/wk',
-    description: 'Start your day with high-energy cardio workouts designed to boost metabolism and improve cardiovascular health.',
-    tags: ['Cardio', 'Morning', 'Metabolism']
-  },
-  {
-    id: '2',
-    title: 'Upper-Lower Split',
-    author: 'Jane Smith',
-    rating: 4.8,
-    summary: 'Build muscle and strength with this comprehensive program focusing on proper form and progressive overload.',
-    shortLabel: 'Upper / Lower',
-    durationHint: '4 days/wk',
-    description: 'Build muscle and strength with this comprehensive program focusing on proper form and progressive overload.',
-    tags: ['Strength', 'Simple', 'Repeatable']
-  },
-  {
-    id: '3',
-    title: 'Yoga Flow for Flexibility',
-    author: 'Sarah Johnson',
-    rating: 4.2,
-    summary: 'Improve flexibility and reduce stress with gentle yoga flows suitable for all levels.',
-    shortLabel: 'Flexibility',
-    durationHint: '3-4 days/wk',
-    description: 'Improve flexibility and reduce stress with gentle yoga flows suitable for all levels.',
-    tags: ['Yoga', 'Flexibility', 'Recovery']
-  },
-  {
-    id: '4',
-    title: 'HIIT Power Sessions',
-    author: 'Mike Wilson',
-    rating: 4.7,
-    summary: 'High-intensity interval training to maximize calorie burn and improve endurance in short sessions.',
-    shortLabel: 'HIIT',
-    durationHint: '3-4 days/wk',
-    description: 'High-intensity interval training to maximize calorie burn and improve endurance in short sessions.',
-    tags: ['HIIT', 'Conditioning', 'Fat Loss']
-  },
-  {
-    id: '5',
-    title: 'Full Body',
-    author: 'Emily Davis',
-    rating: 4.6,
-    summary: 'Perfect for beginners, this program introduces fundamental exercises and proper technique.',
-    shortLabel: 'Total body',
-    durationHint: '2-4 days/wk',
-    description: 'Perfect for beginners, this program introduces fundamental exercises and proper technique.',
-    tags: ['General Fitness', 'Beginner']
-  },
-  {
-    id: '6',
-    title: '5x5 Strength Program',
-    author: 'Chris Brown',
-    rating: 4.9,
-    summary: 'Take your strength to the next level with advanced powerlifting techniques and programming.',
-    shortLabel: 'Strength core',
-    durationHint: '3 days/wk',
-    description: 'Take your strength to the next level with advanced powerlifting techniques and programming.',
-    tags: ['Powerlifting', 'Compound', 'Progressive']
-  },
-  {
-    id: '7',
-    title: 'Pilates Core Strength',
-    author: 'Lisa Anderson',
-    rating: 4.4,
-    summary: 'Develop core strength and stability through controlled Pilates movements and breathing.',
-    shortLabel: 'Core',
-    durationHint: '3-5 days/wk',
-    description: 'Develop core strength and stability through controlled Pilates movements and breathing.',
-    tags: ['Pilates', 'Core', 'Stability']
-  },
-  {
-    id: '8',
-    title: 'Boxing Fundamentals',
-    author: 'Tom Martinez',
-    rating: 4.7,
-    summary: 'Learn boxing basics including footwork, punches, and defensive techniques.',
-    shortLabel: 'Boxing',
-    durationHint: '3-4 days/wk',
-    description: 'Learn boxing basics including footwork, punches, and defensive techniques.',
-    tags: ['Boxing', 'Skills', 'Conditioning']
-  },
-  {
-    id: '9',
-    title: 'Dance Cardio Party',
-    author: 'Maria Garcia',
-    rating: 4.3,
-    summary: 'Fun and energetic dance-based cardio workouts that make exercise enjoyable.',
-    shortLabel: 'Dance',
-    durationHint: '3-5 days/wk',
-    description: 'Fun and energetic dance-based cardio workouts that make exercise enjoyable.',
-    tags: ['Cardio', 'Fun', 'Dance']
-  },
-  {
-    id: '10',
-    title: 'Recovery & Stretching',
-    author: 'David Lee',
-    rating: 4.5,
-    summary: 'Gentle recovery sessions focusing on stretching, mobility, and relaxation.',
-    shortLabel: 'Recovery',
-    durationHint: 'Daily',
-    description: 'Gentle recovery sessions focusing on stretching, mobility, and relaxation.',
-    tags: ['Mobility', 'Recovery', 'Flexibility']
-  },
-  {
-    id: '11',
-    title: 'CrossFit WOD',
-    author: 'Alex Taylor',
-    rating: 4.8,
-    summary: 'Daily CrossFit workouts of the day for experienced athletes seeking variety.',
-    shortLabel: 'CrossFit',
-    durationHint: '5-6 days/wk',
-    description: 'Daily CrossFit workouts of the day for experienced athletes seeking variety.',
-    tags: ['CrossFit', 'Variety', 'Advanced']
-  },
-  {
-    id: '12',
-    title: 'Swimming Technique',
-    author: 'Rachel Green',
-    rating: 4.6,
-    summary: 'Improve swimming efficiency with technique-focused drills and workouts.',
-    shortLabel: 'Swimming',
-    durationHint: '3-4 days/wk',
-    description: 'Improve swimming efficiency with technique-focused drills and workouts.',
-    tags: ['Swimming', 'Technique', 'Cardio']
-  }
-];
-
-const dummyCategories = [
-  { id: '1', label: 'Cardio' },
-  { id: '2', label: 'Muscle Training' },
-  { id: '3', label: 'Boxing' },
-  { id: '4', label: 'Yoga' },
-  { id: '5', label: 'Pilates' },
-  { id: '6', label: 'HIIT' },
-  { id: '7', label: 'Strength' },
-  { id: '8', label: 'Flexibility' }
-];
-
-// Vault items - matching titles with popular programs
-const dummyVaultItems = [
-  { 
-    id: '1', 
-    title: 'Morning Cardio Blast', 
-    author: 'John Doe',
-    rating: 4.5,
-    summary: 'Start your day with high-energy cardio workouts designed to boost metabolism and improve cardiovascular health.',
-    shortLabel: 'Cardio',
-    durationHint: '3-5 days/wk',
-    description: 'Start your day with high-energy cardio workouts designed to boost metabolism and improve cardiovascular health.',
-    tags: ['Cardio', 'Morning', 'Metabolism']
-  },
-  { 
-    id: '2', 
-    title: 'Strength Training Basics', 
-    author: 'Jane Smith',
-    rating: 4.8,
-    summary: 'Build muscle and strength with this comprehensive program focusing on proper form and progressive overload.',
-    shortLabel: 'Upper / Lower',
-    durationHint: '4 days/wk',
-    description: 'Build muscle and strength with this comprehensive program focusing on proper form and progressive overload.',
-    tags: ['Strength', 'Simple', 'Repeatable']
-  }
-];
-
-const builtInPrograms = [
-  {
-    id: 'ppl',
-    shortLabel: '3-day rotation',
-    durationHint: '4-6 days/wk',
-    title: 'Push-Pull-Legs (PPL)',
-    description: 'A beginner-friendly split with clear upper-body focus days that is easy to customize.',
-    tags: ['Strength', 'Hypertrophy', 'Split']
-  },
-  {
-    id: 'upper-lower',
-    shortLabel: 'Upper / Lower',
-    durationHint: '4 days/wk',
-    title: 'Upper-Lower Split',
-    description: 'Simple two-day rotation that can flex between strength blocks or hypertrophy pumps.',
-    tags: ['Strength', 'Simple', 'Repeatable']
-  },
-  {
-    id: 'full-body',
-    shortLabel: 'Total body',
-    durationHint: '2-4 days/wk',
-    title: 'Full Body',
-    description: 'Ideal for beginners, busy people, or anyone who wants every muscle touched each session.',
-    tags: ['General Fitness', 'Beginner']
-  },
-  {
-    id: 'bro-split',
-    shortLabel: 'Classic 5-day',
-    durationHint: '5 days/wk',
-    title: 'Bro Split (Chest / Back / Legs / Shoulders / Arms)',
-    description: 'Bodybuilding staple with a familiar flow—perfect if you love dialing in one area per day.',
-    tags: ['Bodybuilding', 'Volume']
-  },
-  {
-    id: 'strong-5x5',
-    shortLabel: 'Strength core',
-    durationHint: '3 days/wk',
-    title: '5x5 Strength Program',
-    description: 'Iconic compound-lift template that lets you chase progressive overload with minimal fluff.',
-    tags: ['Powerlifting', 'Compound', 'Progressive']
-  },
-  {
-    id: 'powerbuilding',
-    shortLabel: 'Hybrid',
-    durationHint: '4-5 days/wk',
-    title: 'Powerbuilding Program',
-    description: 'Modern mix of heavy barbell work plus accessory hypertrophy for intermediate lifters.',
-    tags: ['Strength', 'Hypertrophy', 'Hybrid']
-  },
-  {
-    id: 'calisthenics',
-    shortLabel: 'Bodyweight',
-    durationHint: '3-5 days/wk',
-    title: 'Calisthenics Program',
-    description: 'Familiar bodyweight progressions that keep equipment light but skills high.',
-    tags: ['Calisthenics', 'Skills', 'Minimal Gear']
-  }
-];
-
-const creationCategories = [
-  { id: 'strength', label: 'Strength' },
-  { id: 'hypertrophy', label: 'Hypertrophy' },
-  { id: 'conditioning', label: 'Conditioning' },
-  { id: 'mobility', label: 'Mobility' },
-  { id: 'powerlifting', label: 'Powerlifting' },
-  { id: 'powerbuilding', label: 'Powerbuilding' },
-  { id: 'bodybuilding', label: 'Bodybuilding' },
-  { id: 'calisthenics', label: 'Calisthenics' },
-  { id: 'general-fitness', label: 'General Fitness' },
-  { id: 'fat-loss', label: 'Fat Loss' },
-  { id: 'equipment-light', label: 'Minimal Equipment' },
-  { id: 'busy-schedule', label: 'Busy Schedule' }
-];
+// Backend URL / port configuration
+// Define in frontend/.env, e.g.:
+// VITE_BACKEND_PORT=7000
+// or VITE_API_BASE_URL=http://localhost:7000
+const BACKEND_PORT = 8000;
+const API_BASE_URL = `http://localhost:${BACKEND_PORT}`;
 
 // Category Icons (simple SVG placeholders)
 const CategoryIcon = ({ name }) => {
@@ -336,6 +95,11 @@ function App() {
   const [currentView, setCurrentView] = useState(null); // 'login', 'signup', 'admin-login', 'admin-dashboard'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [programs, setPrograms] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [vaultItems, setVaultItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Initialize theme from HTML or localStorage
   useEffect(() => {
@@ -343,6 +107,92 @@ function App() {
     const savedTheme = localStorage.getItem('theme') || htmlTheme || 'dark';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  // Fetch data from backend APIs
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [programRes, categoryRes, userRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/getPrograms`),
+          fetch(`${API_BASE_URL}/getCategories`),
+          fetch(`${API_BASE_URL}/getUsers`),
+        ]);
+
+        if (!programRes.ok || !categoryRes.ok || !userRes.ok) {
+          throw new Error('Failed to load data from server');
+        }
+
+        const [programData, categoryData, userData] = await Promise.all([
+          programRes.json(),
+          categoryRes.json(),
+          userRes.json(),
+        ]);
+
+        // Map programs to UI shape
+        setPrograms(
+          (programData || []).map((p) => ({
+            id: p._id,
+            title: p.title,
+            author: p.authorName || 'System',
+            rating: typeof p.rating === 'number' ? p.rating : 0,
+            summary: p.summary || p.description || '',
+            shortLabel: p.shortLabel || '',
+            durationHint: p.durationHint || '',
+            description: p.description || '',
+            tags: p.tags || [],
+            type: p.type,
+          }))
+        );
+
+        // Map categories to UI shape
+        setCategories(
+          (categoryData || []).map((c) => ({
+            id: c._id,
+            label: c.label,
+            slug: c.slug,
+            type: c.type,
+          }))
+        );
+
+        // Build vault items from first user’s saved programs
+        const firstUser = (userData || [])[0];
+        if (firstUser && Array.isArray(firstUser.savedPrograms)) {
+          const programsById = new Map(
+            (programData || []).map((p) => [String(p._id), p])
+          );
+
+          const mappedVault = firstUser.savedPrograms
+            .map((sp) => {
+              const prog = programsById.get(String(sp.programId));
+              if (!prog) return null;
+              return {
+                id: sp._id || String(sp.programId),
+                title: prog.title,
+                author: prog.authorName || firstUser.username,
+                rating: typeof prog.rating === 'number' ? prog.rating : 0,
+                summary: prog.summary || prog.description || '',
+                shortLabel: prog.shortLabel || '',
+                durationHint: prog.durationHint || '',
+                description: prog.description || '',
+                tags: prog.tags || [],
+              };
+            })
+            .filter(Boolean);
+
+          setVaultItems(mappedVault);
+        } else {
+          setVaultItems([]);
+        }
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load data. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   
@@ -369,7 +219,7 @@ function App() {
   const handleOpenProgram = (id) => {
     console.log('Open program:', id);
     
-    const program = dummyPrograms.find(p => p.id === id);
+    const program = programs.find(p => p.id === id);
     if (program) {
       setSelectedProgram(program);
       setIsProgramDetailOpen(true);
@@ -383,27 +233,16 @@ function App() {
     setProgramDetailView(null);
   };
 
-  // Map popular programs to built-in program IDs
-  const programMapping = {
-    '5': 'full-body', // Full Body -> Full Body
-    '6': 'strong-5x5', // 5x5 Strength Program -> 5x5 Strength
-    '2': 'upper-lower', // Upper-Lower Split -> Upper-Lower Split
-    // Add more mappings as needed
-  };
-
-  const handleOpenProgramDetail = (id) => {
-    console.log('Opening program detail page for:', id);
+  const handleOpenProgramDetail = (programKey) => {
+    console.log('Opening program detail page for:', programKey);
     setIsProgramDetailOpen(false);
     
-    // Check if this program maps to a built-in program
-    const builtInId = programMapping[id];
-    if (builtInId) {
-      const template = getBuiltInProgramTemplate(builtInId);
-      if (template) {
-        setSelectedBuiltInProgram(template);
-        setCurrentPage('program-detail');
-        return;
-      }
+    // Check if this program maps to a built-in template
+    const template = getBuiltInProgramTemplate(programKey);
+    if (template) {
+      setSelectedBuiltInProgram(template);
+      setCurrentPage('program-detail');
+      return;
     }
     
     // For other programs, show empty detail page
@@ -426,14 +265,14 @@ function App() {
     handleCloseProgramModal();
   };
 
-  const categoriesWithIcons = dummyCategories.map(cat => ({
+  const categoriesWithIcons = categories.map(cat => ({
     ...cat,
     icon: <CategoryIcon name={cat.label} />
   }));
 
-  const getBuiltInProgramTemplate = (programId) => {
+  const getBuiltInProgramTemplate = (programKey) => {
     const templates = {
-      'ppl': {
+      'Push-Pull-Legs (PPL)': {
         days: [
           {
             id: 1,
@@ -524,7 +363,7 @@ function App() {
           }
         ]
       },
-      'upper-lower': {
+      'Upper-Lower Split': {
         days: [
           {
             id: 1,
@@ -586,7 +425,7 @@ function App() {
           }
         ]
       },
-      'full-body': {
+      'Full Body': {
         days: [
           {
             id: 1,
@@ -620,11 +459,11 @@ function App() {
         ]
       }
     };
-    return templates[programId] || null;
+    return templates[programKey] || null;
   };
 
   const handleSelectBuiltInProgram = (program) => {
-    const template = getBuiltInProgramTemplate(program.id);
+    const template = getBuiltInProgramTemplate(program.title);
     if (template) {
       setSelectedBuiltInProgram(template);
       setCurrentPage('program-detail');
@@ -646,12 +485,15 @@ function App() {
   // Check if we're on an auth page (should hide sidebar)
   const isAuthPage = currentView === 'login' || currentView === 'signup' || currentView === 'admin-login' || currentView === 'admin-dashboard';
 
+  const builtInPrograms = programs.filter((p) => p.type === 'system');
+  const creationCategories = categories;
+
   return (
     <div className="app" style={{ display: 'flex', minHeight: '100vh' }}>
       {!isAuthPage && (
         <SideBar
           activeKey={activeKey}
-          vaultItems={dummyVaultItems}
+          vaultItems={vaultItems}
           defaultVaultOpen={true}
           onNav={handleNav}
           onOpenProgram={handleOpenProgram}
@@ -717,9 +559,19 @@ function App() {
           </>
         ) : (
           <>
+            {loading && (
+              <div className="container py-5">
+                <p>Loading programs...</p>
+              </div>
+            )}
+            {error && !loading && (
+              <div className="container py-5">
+                <p>{error}</p>
+              </div>
+            )}
             {currentPage === 'home' && (
               <GuestHome
-                popularPrograms={dummyPrograms}
+                popularPrograms={programs}
                 categories={categoriesWithIcons}
                 onSearch={handleSearch}
                 onOpenProgram={handleOpenProgram}
@@ -773,7 +625,7 @@ function App() {
         )}
             {currentPage === 'vault' && (
               <Vault
-                vaultItems={dummyVaultItems}
+                vaultItems={vaultItems}
                 onOpenProgram={handleOpenProgram}
               />
             )}
