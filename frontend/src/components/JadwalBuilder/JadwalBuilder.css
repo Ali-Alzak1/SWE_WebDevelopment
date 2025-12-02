@@ -60,8 +60,34 @@
   width: 100%;
 }
 
+.jadwal-builder__textarea {
+  resize: vertical;
+  min-height: 4.5rem;
+}
+
 .jadwal-builder__select--multi {
-  min-height: 2.5rem;
+}
+
+.jadwal-builder__tags-box {
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.4rem;
+  border: 1px solid transparent;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.jadwal-builder__tag-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.jadwal-builder__tag-checkbox {
+  cursor: pointer;
 }
 
 .jadwal-builder__toggle {

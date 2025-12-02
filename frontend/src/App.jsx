@@ -438,9 +438,10 @@ function App() {
           />
         )}
         {currentPage === 'jadwal-builder' && (
-          <JadwalBuilder
+        <JadwalBuilder
             builtInProgram={selectedBuiltInProgram}
             isCustom={!selectedBuiltInProgram}
+            initialCategories={creationCategories}
             onSave={async (schedule) => {
               console.log('Saving schedule to vault:', schedule);
 

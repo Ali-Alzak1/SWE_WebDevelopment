@@ -27,9 +27,10 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
     setIsPublic(prev => !prev);
   };
 
-  const handleTagsChange = (event) => {
-    const selected = Array.from(event.target.selectedOptions).map((opt) => opt.value);
-    setTags(selected);
+  const handleTagToggle = (label) => {
+    setTags((prev) =>
+      prev.includes(label) ? prev.filter((t) => t !== label) : [...prev, label]
+    );
   };
 
   const handleAddDay = () => {
@@ -228,12 +229,12 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
               <label className="jadwal-builder__label" htmlFor="jadwal-description">
                 Description
               </label>
-              <input
+              <textarea
                 id="jadwal-description"
-                type="text"
-                className="jadwal-builder__text-input"
+                className="jadwal-builder__text-input jadwal-builder__textarea"
                 placeholder="Describe this schedule..."
                 value={description}
+                rows={3}
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
@@ -242,19 +243,28 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
               <label className="jadwal-builder__label" htmlFor="jadwal-tags">
                 Categories
               </label>
-              <select
-                id="jadwal-tags"
-                className="jadwal-builder__select jadwal-builder__select--multi"
-                multiple
-                value={tags}
-                onChange={handleTagsChange}
-              >
-                {initialCategories.map((cat) => (
-                  <option key={cat.id || cat.label} value={cat.label}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
+              <div id="jadwal-tags" className="jadwal-builder__tags-box">
+                {initialCategories.map((cat) => {
+                  const label = cat.label;
+                  const selected = tags.includes(label);
+                  return (
+                    <label
+                      key={cat.id || label}
+                      className="jadwal-builder__tag-row"
+                    >
+                      <span className="jadwal-builder__tag-label">
+                        {label}
+                      </span>
+                      <input
+                        type="checkbox"
+                        className="jadwal-builder__tag-checkbox"
+                        checked={selected}
+                        onChange={() => handleTagToggle(label)}
+                      />
+                    </label>
+                  );
+                })}
+              </div>
             </div>
             <div className="jadwal-builder__field-row">
               <div className="jadwal-builder__field">
