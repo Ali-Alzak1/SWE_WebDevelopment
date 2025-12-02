@@ -6,6 +6,12 @@ import './JadwalBuilder.css';
 
 const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, isCustom = true }) => {
   const [scheduleName, setScheduleName] = useState('');
+  const [description, setDescription] = useState(builtInProgram?.description || '');
+  const [durationHint, setDurationHint] = useState(builtInProgram?.durationHint || '');
+  const [tags, setTags] = useState(builtInProgram?.tags || []);
+  const [isPublic, setIsPublic] = useState(
+    typeof builtInProgram?.isPublic === 'boolean' ? builtInProgram.isPublic : true
+  );
   const [days, setDays] = useState(builtInProgram ? builtInProgram.days : [{ id: 1, exercises: [] }]);
   const [activeDayId, setActiveDayId] = useState(1);
   const [showMuscleSelection, setShowMuscleSelection] = useState(false);
@@ -16,6 +22,15 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
 
   const activeDay = days.find(d => d.id === activeDayId);
   const hasExercises = activeDay?.exercises.length > 0;
+
+  const handleTogglePublic = () => {
+    setIsPublic(prev => !prev);
+  };
+
+  const handleTagsChange = (event) => {
+    const selected = Array.from(event.target.selectedOptions).map((opt) => opt.value);
+    setTags(selected);
+  };
 
   const handleAddDay = () => {
     if (days.length < 7) {
@@ -208,6 +223,70 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
             value={scheduleName}
             onChange={(e) => setScheduleName(e.target.value)}
           />
+          <div className="jadwal-builder__meta">
+            <div className="jadwal-builder__field">
+              <label className="jadwal-builder__label" htmlFor="jadwal-description">
+                Description
+              </label>
+              <input
+                id="jadwal-description"
+                type="text"
+                className="jadwal-builder__text-input"
+                placeholder="Describe this schedule..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="jadwal-builder__field">
+              <label className="jadwal-builder__label" htmlFor="jadwal-tags">
+                Categories
+              </label>
+              <select
+                id="jadwal-tags"
+                className="jadwal-builder__select jadwal-builder__select--multi"
+                multiple
+                value={tags}
+                onChange={handleTagsChange}
+              >
+                {initialCategories.map((cat) => (
+                  <option key={cat.id || cat.label} value={cat.label}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="jadwal-builder__field-row">
+              <div className="jadwal-builder__field">
+                <label className="jadwal-builder__label" htmlFor="jadwal-duration">
+                  Duration hint
+                </label>
+                <select
+                  id="jadwal-duration"
+                  className="jadwal-builder__select"
+                  value={durationHint}
+                  onChange={(e) => setDurationHint(e.target.value)}
+                >
+                  <option value="">Select duration</option>
+                  <option value="2-3 days/wk">2–3 days / week</option>
+                  <option value="3-4 days/wk">3–4 days / week</option>
+                  <option value="4-5 days/wk">4–5 days / week</option>
+                  <option value="Daily">Daily</option>
+                </select>
+              </div>
+              <div className="jadwal-builder__field jadwal-builder__field--toggle">
+                <span className="jadwal-builder__label">Visibility</span>
+                <button
+                  type="button"
+                  className={`jadwal-builder__toggle ${isPublic ? 'is-on' : 'is-off'}`}
+                  onClick={handleTogglePublic}
+                  aria-pressed={isPublic}
+                >
+                  {isPublic ? 'Public' : 'Private'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="jadwal-builder__toolbar">
@@ -266,6 +345,10 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
                 if (onSave) {
                   onSave({
                     name: scheduleName || 'Untitled Schedule',
+                    description,
+                    durationHint,
+                    tags,
+                    isPublic,
                     days: days,
                     isCustom: isCustom
                   });
