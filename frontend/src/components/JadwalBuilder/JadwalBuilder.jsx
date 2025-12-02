@@ -6,6 +6,7 @@ import './JadwalBuilder.css';
 
 const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, isCustom = true }) => {
   const [scheduleName, setScheduleName] = useState('');
+  const [shortLabel, setShortLabel] = useState(builtInProgram?.shortLabel || '');
   const [description, setDescription] = useState(builtInProgram?.description || '');
   const [durationHint, setDurationHint] = useState(builtInProgram?.durationHint || '');
   const [tags, setTags] = useState(builtInProgram?.tags || []);
@@ -226,6 +227,20 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
           />
           <div className="jadwal-builder__meta">
             <div className="jadwal-builder__field">
+              <label className="jadwal-builder__label" htmlFor="jadwal-shortlabel">
+                Short label
+              </label>
+              <input
+                id="jadwal-shortlabel"
+                type="text"
+                className="jadwal-builder__text-input"
+                placeholder="e.g. 4 days / wk, Push / Pull"
+                value={shortLabel}
+                onChange={(e) => setShortLabel(e.target.value)}
+              />
+            </div>
+
+            <div className="jadwal-builder__field">
               <label className="jadwal-builder__label" htmlFor="jadwal-description">
                 Description
               </label>
@@ -355,6 +370,7 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
                 if (onSave) {
                   onSave({
                     name: scheduleName || 'Untitled Schedule',
+                    shortLabel,
                     description,
                     durationHint,
                     tags,
