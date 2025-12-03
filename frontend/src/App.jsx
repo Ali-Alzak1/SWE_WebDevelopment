@@ -24,51 +24,9 @@ import './styles/colorPalette.css';
 const BACKEND_PORT = 8000;
 const API_BASE_URL = `http://localhost:${BACKEND_PORT}`;
 
-// Category Icons (simple SVG placeholders)
+// Category Icons - matches backend seed categories
 const CategoryIcon = ({ name }) => {
   const icons = {
-    'Cardio': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-      </svg>
-    ),
-    'Muscle Training': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M17 6h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1"></path>
-        <path d="M7 6H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
-        <line x1="12" y1="6" x2="12" y2="18"></line>
-        <line x1="7" y1="12" x2="17" y2="12"></line>
-      </svg>
-    ),
-    'Boxing': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-        <line x1="9" y1="3" x2="9" y2="21"></line>
-        <line x1="15" y1="3" x2="15" y2="21"></line>
-        <line x1="3" y1="9" x2="21" y2="9"></line>
-        <line x1="3" y1="15" x2="21" y2="15"></line>
-      </svg>
-    ),
-    'Yoga': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="2" x2="12" y2="22"></line>
-        <line x1="2" y1="12" x2="22" y2="12"></line>
-      </svg>
-    ),
-    'Pilates': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
-        <path d="M2 17l10 5 10-5"></path>
-        <path d="M2 12l10 5 10-5"></path>
-      </svg>
-    ),
-    'HIIT': (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-        <polyline points="17 6 23 6 23 12"></polyline>
-      </svg>
-    ),
     'Strength': (
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M6 9V2h12v7"></path>
@@ -76,13 +34,82 @@ const CategoryIcon = ({ name }) => {
         <path d="M6 14h12"></path>
       </svg>
     ),
-    'Flexibility': (
+    'Hypertrophy': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 6v6l4 2"></path>
+      </svg>
+    ),
+    'Conditioning': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </svg>
+    ),
+    'Mobility': (
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
       </svg>
+    ),
+    'Powerlifting': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <path d="M9 9h6v6H9z"></path>
+        <line x1="9" y1="12" x2="15" y2="12"></line>
+        <line x1="12" y1="9" x2="12" y2="15"></line>
+      </svg>
+    ),
+    'Powerbuilding': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M17 6h1a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-1"></path>
+        <path d="M7 6H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h1"></path>
+        <line x1="12" y1="6" x2="12" y2="18"></line>
+        <line x1="7" y1="12" x2="17" y2="12"></line>
+      </svg>
+    ),
+    'Bodybuilding': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    ),
+    'Calisthenics': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="5" r="3"></circle>
+        <path d="M12 8v8"></path>
+        <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+        <path d="M12 16v3"></path>
+        <path d="M8 19h8"></path>
+      </svg>
+    ),
+    'General Fitness': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="2" x2="12" y2="22"></line>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+      </svg>
+    ),
+    'Fat Loss': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+      </svg>
+    ),
+    'Minimal Equipment': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+        <path d="M21 15l-5-5L5 21"></path>
+      </svg>
+    ),
+    'Busy Schedule': (
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
     )
   };
-  return icons[name] || icons['Cardio'];
+  return icons[name] || icons['General Fitness'];
 };
 
 function App() {
@@ -111,6 +138,83 @@ function App() {
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
+
+  // Helper function to build vault items from user and program data
+  const buildVaultItems = (userData, programData) => {
+    if (!userData || !Array.isArray(userData.savedPrograms)) {
+      return [];
+    }
+
+    const programsById = new Map(
+      (programData || []).map((p) => [String(p._id), p])
+    );
+
+    return userData.savedPrograms
+      .map((sp) => {
+        const prog = programsById.get(String(sp.programId));
+        if (!prog) return null;
+        return {
+          id: String(sp.programId), // ✅ Use actual program ID, not savedProgram subdoc ID
+          title: prog.title,
+          author: prog.authorName || userData.username,
+          rating: typeof prog.rating === 'number' ? prog.rating : 0,
+          summary: prog.summary || prog.description || '',
+          shortLabel: prog.shortLabel || '',
+          durationHint: prog.durationHint || '',
+          description: prog.description || '',
+          tags: prog.tags || [],
+          type: prog.type,
+          programInfo: prog.programInfo, // ✅ Include programInfo for routing logic
+        };
+      })
+      .filter(Boolean);
+  };
+
+  // Function to refresh vault items after saving
+  const refreshVaultItems = async () => {
+    if (!currentUser?._id) return;
+
+    try {
+      const [programRes, userRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/getPrograms`),
+        fetch(`${API_BASE_URL}/getUsers`),
+      ]);
+
+      if (programRes.ok && userRes.ok) {
+        const [programData, userData] = await Promise.all([
+          programRes.json(),
+          userRes.json(),
+        ]);
+
+        // Update programs state
+        setPrograms(
+          (programData || []).map((p) => ({
+            id: p._id,
+            title: p.title,
+            author: p.authorName || 'System',
+            rating: typeof p.rating === 'number' ? p.rating : 0,
+            summary: p.summary || p.description || '',
+            shortLabel: p.shortLabel || '',
+            durationHint: p.durationHint || '',
+            description: p.description || '',
+            tags: p.tags || [],
+            type: p.type,
+            programInfo: p.programInfo,
+          }))
+        );
+
+        // Find current user and refresh vault
+        const updatedUser = (userData || []).find(u => String(u._id) === String(currentUser._id));
+        if (updatedUser) {
+          setCurrentUser(updatedUser);
+          const newVaultItems = buildVaultItems(updatedUser, programData);
+          setVaultItems(newVaultItems);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to refresh vault items:', err);
+    }
+  };
 
   // Fetch data from backend APIs
   useEffect(() => {
@@ -164,36 +268,11 @@ function App() {
         // Store detailed programInfo docs
         // setProgramInfos(programInfoData || []);
 
-        // Build vault items from first user’s saved programs
+        // Build vault items from first user's saved programs
         const firstUser = (userData || [])[0];
         setCurrentUser(firstUser || null);
-        if (firstUser && Array.isArray(firstUser.savedPrograms)) {
-          const programsById = new Map(
-            (programData || []).map((p) => [String(p._id), p])
-          );
-
-          const mappedVault = firstUser.savedPrograms
-            .map((sp) => {
-              const prog = programsById.get(String(sp.programId));
-              if (!prog) return null;
-              return {
-                id: sp._id || String(sp.programId),
-                title: prog.title,
-                author: prog.authorName || firstUser.username,
-                rating: typeof prog.rating === 'number' ? prog.rating : 0,
-                summary: prog.summary || prog.description || '',
-                shortLabel: prog.shortLabel || '',
-                durationHint: prog.durationHint || '',
-                description: prog.description || '',
-                tags: prog.tags || [],
-              };
-            })
-            .filter(Boolean);
-
-          setVaultItems(mappedVault);
-        } else {
-          setVaultItems([]);
-        }
+        const vaultItemsData = buildVaultItems(firstUser, programData);
+        setVaultItems(vaultItemsData);
       } catch (err) {
         console.error(err);
         setError('Failed to load data. Please try again later.');
@@ -229,8 +308,31 @@ function App() {
   const handleOpenProgram = (id) => {
     console.log('Open program:', id);
 
-    const program = programs.find(p => p.id === id);
+    // Check both programs array and vaultItems for the program
+    let program = programs.find(p => p.id === id);
+    
+    // If not found in programs, check vaultItems (for vault clicks)
+    if (!program) {
+      program = vaultItems.find(p => p.id === id);
+    }
+
     if (program) {
+      // If program has programInfo.days with exercises, route directly to detail page
+      if (program.programInfo && Array.isArray(program.programInfo.days) && program.programInfo.days.length > 0) {
+        // Check if any day has exercises
+        const hasExercises = program.programInfo.days.some(day => 
+          day.exercises && Array.isArray(day.exercises) && day.exercises.length > 0
+        );
+        
+        if (hasExercises) {
+          // Route directly to program detail page (skip modal)
+          setSelectedBuiltInProgram(program.programInfo);
+          setCurrentPage('program-detail');
+          return;
+        }
+      }
+      
+      // Otherwise, show modal first
       setSelectedProgram(program);
       setIsProgramDetailOpen(true);
       setProgramDetailView('modal');
@@ -247,15 +349,44 @@ function App() {
     console.log('Opening program detail page for:', programKey);
     setIsProgramDetailOpen(false);
 
-    // Check if this program maps to a built-in template
-    const template = getBuiltInProgramTemplate(programKey);
-    if (template) {
-      setSelectedBuiltInProgram(template);
+    // programKey can be either a program ID (string) or title/shortLabel
+    // First try to find by ID
+    let program = programs.find(p => p.id === programKey);
+    
+    // If not found, try to find by title or shortLabel
+    if (!program) {
+      program = programs.find(p => p.title === programKey || p.shortLabel === programKey);
+    }
+
+    // If still not found, check vaultItems
+    if (!program) {
+      program = vaultItems.find(p => p.id === programKey || p.title === programKey);
+    }
+
+    if (program && program.programInfo && Array.isArray(program.programInfo.days)) {
+      // Program has programInfo with days - route to detail page
+      setSelectedBuiltInProgram(program.programInfo);
       setCurrentPage('program-detail');
       return;
     }
 
-    // For other programs, show empty detail page
+    // For programs without programInfo or with empty days, show builder
+    if (program) {
+      // If it's a system program, try to get template
+      const template = getBuiltInProgramTemplate(program.title);
+      if (template) {
+        setSelectedBuiltInProgram(template);
+        setCurrentPage('program-detail');
+        return;
+      }
+      
+      // Otherwise, go to builder with empty program
+      setSelectedBuiltInProgram(null);
+      setCurrentPage('jadwal-builder');
+      return;
+    }
+
+    // Fallback: show empty detail page
     setProgramDetailView('detail');
     setCurrentPage('program-detail');
   };
@@ -327,6 +458,9 @@ function App() {
 
         // 3. ONLY run success alert if response.ok is true
         alert(`Schedule "${schedule.name}" saved to vault!`);
+        
+        // 4. Refresh vault items to show the newly saved program
+        await refreshVaultItems();
       }
     } catch (err) {
       console.error(err);
@@ -495,17 +629,20 @@ function App() {
                         }
                       );
 
-                      if (!savedRes.ok) {
-                        throw new Error('Failed to add program to user vault');
-                      }
+                    if (!savedRes.ok) {
+                      throw new Error('Failed to add program to user vault');
                     }
-
-                    alert(`Schedule "${schedule.name}" saved to vault!`);
-                  } catch (err) {
-                    console.error(err);
-                    alert('Failed to save schedule. Please try again.');
                   }
-                }}
+
+                  alert(`Schedule "${schedule.name}" saved to vault!`);
+                  
+                  // Refresh vault items to show the newly saved program
+                  await refreshVaultItems();
+                } catch (err) {
+                  console.error(err);
+                  alert('Failed to save schedule. Please try again.');
+                }
+              }}
               />
             )}
             {currentPage === 'program-detail' && selectedBuiltInProgram && (
