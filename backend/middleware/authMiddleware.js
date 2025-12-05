@@ -131,6 +131,64 @@ export const authenticateToken = async (req, res, next) => {
 };
 
 /**
+ * Optional authentication middleware - attaches user if token is valid, but doesn't fail if missing
+ * Useful for endpoints that work for both authenticated and unauthenticated users
+ */
+export const optionalAuthenticateToken = async (req, res, next) => {
+    try {
+        // Get token from Authorization header
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+
+        if (!token) {
+            // No token provided - continue without user (for public access)
+            req.user = null;
+            return next();
+        }
+
+        // Check if JWT_SECRET is configured
+        if (!process.env.JWT_SECRET) {
+            console.error("[OPTIONAL AUTH MIDDLEWARE ERROR] JWT_SECRET is not defined");
+            req.user = null;
+            return next();
+        }
+
+        // Verify token
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (verifyError) {
+            // Invalid or expired token - continue without user
+            req.user = null;
+            return next();
+        }
+
+        // Get user from database (excluding password)
+        try {
+            const user = await UserModel.findById(decoded.userId).select("-password");
+            if (user && !user.isBanned) {
+                req.user = user;
+                console.log("[OPTIONAL AUTH MIDDLEWARE] User authenticated:", {
+                    userId: user._id,
+                    username: user.username,
+                });
+            } else {
+                req.user = null;
+            }
+        } catch (dbError) {
+            console.error("[OPTIONAL AUTH MIDDLEWARE ERROR] Database query failed:", dbError.message);
+            req.user = null;
+        }
+
+        next();
+    } catch (error) {
+        console.error("[OPTIONAL AUTH MIDDLEWARE ERROR] Middleware failed:", error.message);
+        req.user = null;
+        next();
+    }
+};
+
+/**
  * Middleware to check if user has admin role
  */
 export const requireAdmin = (req, res, next) => {

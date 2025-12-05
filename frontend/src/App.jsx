@@ -139,6 +139,38 @@ function App() {
     document.documentElement.setAttribute('data-theme', savedTheme);
   }, []);
 
+  // Helper function to fetch current user from token
+  const fetchCurrentUser = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.data?.user) {
+          // Fetch full user data including savedPrograms
+          const userRes = await fetch(`${API_BASE_URL}/getUsers`);
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            const fullUser = userData.find(u => String(u._id) === String(data.data.user.id));
+            return fullUser || null;
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch current user:', err);
+    }
+    return null;
+  };
+
   // Helper function to build vault items from user and program data
   const buildVaultItems = (userData, programData) => {
     if (!userData || !Array.isArray(userData.savedPrograms)) {
@@ -170,13 +202,24 @@ function App() {
       .filter(Boolean);
   };
 
+  // Helper function to get fetch headers with optional auth token
+  const getFetchHeaders = () => {
+    const token = localStorage.getItem('token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+  };
+
   // Function to refresh vault items after saving
   const refreshVaultItems = async () => {
     if (!currentUser?._id) return;
 
     try {
+      const headers = getFetchHeaders();
       const [programRes, userRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/getPrograms`),
+        fetch(`${API_BASE_URL}/getPrograms`, { headers }),
         fetch(`${API_BASE_URL}/getUsers`),
       ]);
 
@@ -220,8 +263,9 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const headers = getFetchHeaders();
         const [programRes, categoryRes, userRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/getPrograms`),
+          fetch(`${API_BASE_URL}/getPrograms`, { headers }),
           fetch(`${API_BASE_URL}/getCategories`),
           fetch(`${API_BASE_URL}/getUsers`),
           // fetch(`${API_BASE_URL}/programsinfos`),
@@ -265,14 +309,18 @@ function App() {
           }))
         );
 
-        // Store detailed programInfo docs
-        // setProgramInfos(programInfoData || []);
-
-        // Build vault items from first user's saved programs
-        const firstUser = (userData || [])[0];
-        setCurrentUser(firstUser || null);
-        const vaultItemsData = buildVaultItems(firstUser, programData);
-        setVaultItems(vaultItemsData);
+        // Fetch current user from token if available
+        const authenticatedUser = await fetchCurrentUser();
+        if (authenticatedUser) {
+          setCurrentUser(authenticatedUser);
+          setIsAuthenticated(true);
+          const vaultItemsData = buildVaultItems(authenticatedUser, programData);
+          setVaultItems(vaultItemsData);
+        } else {
+          // No authenticated user, clear vault
+          setCurrentUser(null);
+          setVaultItems([]);
+        }
       } catch (err) {
         console.error(err);
         setError('Failed to load data. Please try again later.');
@@ -441,9 +489,12 @@ function App() {
     try {
       if (currentUser?._id && schedule?.programId) {
         // 1. Await the fetch and store the response
-        const response = await fetch(`${API_BASE_URL}/users/${currentUser._id}/saved-programs`, {
+        const response = await fetch(`${API_BASE_URL}/api/users/${currentUser._id}/saved-programs`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
           body: JSON.stringify({
             programId: schedule.programId,
             status: 'active',
@@ -496,8 +547,29 @@ function App() {
                   setCurrentView(null);
                   setCurrentPage('home');
                 }}
-                onLogin={(user) => {
+                onLogin={async (user, token) => {
                   setIsAuthenticated(true);
+                  // Fetch full user data including savedPrograms
+                  try {
+                    const userRes = await fetch(`${API_BASE_URL}/getUsers`);
+                    if (userRes.ok) {
+                      const userData = await userRes.json();
+                      const fullUser = userData.find(u => String(u._id) === String(user.id));
+                      if (fullUser) {
+                        setCurrentUser(fullUser);
+                        // Refresh vault items
+                        const headers = getFetchHeaders();
+                        const programRes = await fetch(`${API_BASE_URL}/getPrograms`, { headers });
+                        if (programRes.ok) {
+                          const programData = await programRes.json();
+                          const vaultItemsData = buildVaultItems(fullUser, programData);
+                          setVaultItems(vaultItemsData);
+                        }
+                      }
+                    }
+                  } catch (err) {
+                    console.error('Failed to fetch user data:', err);
+                  }
                   setCurrentView(null);
                   setCurrentPage('account');
                 }}
@@ -511,8 +583,29 @@ function App() {
                   setCurrentView(null);
                   setCurrentPage('home');
                 }}
-                onSignUp={(form) => {
+                onSignUp={async (user, token) => {
                   setIsAuthenticated(true);
+                  // Fetch full user data including savedPrograms
+                  try {
+                    const userRes = await fetch(`${API_BASE_URL}/getUsers`);
+                    if (userRes.ok) {
+                      const userData = await userRes.json();
+                      const fullUser = userData.find(u => String(u._id) === String(user.id));
+                      if (fullUser) {
+                        setCurrentUser(fullUser);
+                        // Refresh vault items
+                        const headers = getFetchHeaders();
+                        const programRes = await fetch(`${API_BASE_URL}/getPrograms`, { headers });
+                        if (programRes.ok) {
+                          const programData = await programRes.json();
+                          const vaultItemsData = buildVaultItems(fullUser, programData);
+                          setVaultItems(vaultItemsData);
+                        }
+                      }
+                    }
+                  } catch (err) {
+                    console.error('Failed to fetch user data:', err);
+                  }
                   setCurrentView(null);
                   setCurrentPage('account');
                 }}
@@ -571,7 +664,14 @@ function App() {
               />
             )}
             {currentPage === 'account' && (
-              <Profile />
+              <Profile 
+                currentUser={currentUser} 
+                onUpdateUser={(updatedUser) => {
+                  setCurrentUser(updatedUser);
+                  // Refresh vault items after profile update
+                  refreshVaultItems();
+                }}
+              />
             )}
             {currentPage === 'create' && (
               <JadwalCreationPage
@@ -619,10 +719,13 @@ function App() {
                     // 2) If we have a current user, add this program to their savedPrograms
                     if (currentUser?._id) {
                       const savedRes = await fetch(
-                        `${API_BASE_URL}/users/${currentUser._id}/saved-programs`,
+                        `${API_BASE_URL}/api/users/${currentUser._id}/saved-programs`,
                         {
                           method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          },
                           body: JSON.stringify({
                             programId: createdProgram._id,
                             status: 'active',

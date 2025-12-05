@@ -285,3 +285,87 @@ export const uploadProfileImage = async (req, res) => {
     }
 };
 
+/**
+ * Add a program to user's saved programs
+ */
+export const addSavedProgram = async (req, res) => {
+    try {
+        const { id } = req.params; // User ID from route
+        const { programId, status } = req.body;
+        const userId = req.user._id; // Authenticated user ID
+
+        // Verify that the authenticated user matches the route parameter
+        if (String(userId) !== String(id)) {
+            return res.status(403).json({
+                success: false,
+                message: "You can only modify your own saved programs",
+            });
+        }
+
+        if (!programId) {
+            return res.status(400).json({
+                success: false,
+                message: "Program ID is required",
+            });
+        }
+
+        // Find user
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        // Check if program is already saved
+        const existingSavedProgram = user.savedPrograms.find(
+            (sp) => String(sp.programId) === String(programId)
+        );
+
+        if (existingSavedProgram) {
+            // Update status if different
+            if (status && existingSavedProgram.status !== status) {
+                existingSavedProgram.status = status;
+                await user.save();
+            }
+            return res.status(200).json({
+                success: true,
+                message: "Program already saved",
+                data: {
+                    user: {
+                        id: user._id,
+                        savedPrograms: user.savedPrograms,
+                    },
+                },
+            });
+        }
+
+        // Add new saved program
+        user.savedPrograms.push({
+            programId,
+            status: status || "active",
+        });
+
+        const updatedUser = await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Program added to vault successfully",
+            data: {
+                user: {
+                    id: updatedUser._id,
+                    savedPrograms: updatedUser.savedPrograms,
+                },
+            },
+        });
+    } catch (error) {
+        console.error("Add saved program error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to add program to vault",
+            error: error.message,
+        });
+    }
+};
+

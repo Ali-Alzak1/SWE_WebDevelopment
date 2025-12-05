@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import jwt from "jsonwebtoken";
 import UserModel from "./models/User.js";
 import ProgramModel, { ProgramInfoModel } from "./models/Program.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -59,202 +60,6 @@ mongoose
     process.exit(1);
   });
 
-// ============================================
-// CORRECT ORDER FOR YOUR index.js
-// ============================================
-
-// 1. FIRST: Define your schemas
-
-// const userSchema = new mongoose.Schema({
-//   username: {
-//     type: String,
-//     required: true,
-//   },
-//   email: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//   },
-//   role: {
-//     type: String,
-//     enum: ["guest", "user", "admin"],
-//     default: "guest",
-//   },
-//   savedPrograms: [
-//     {
-//       programId: {
-//         type: mongoose.Schema.Types.ObjectId,
-//         ref: "programs",
-//       },
-//       savedAt: {
-//         type: Date,
-//         default: Date.now,
-//       },
-//       status: {
-//         type: String,
-//         default: "active",
-//       },
-//     },
-//   ],
-//   createdProgramCount: {
-//     type: Number,
-//     default: 0,
-//   },
-//   joinedAt: {
-//     type: Date,
-//     default: Date.now,
-//   },
-// });
-
-// // Helper function to validate and convert IDs to integers
-// const validateIntegerId = function (value) {
-//   if (typeof value === 'number') {
-//     return Math.floor(value);
-//   }
-//   if (typeof value === 'string') {
-//     const parsed = parseInt(value, 10);
-//     if (!isNaN(parsed)) return parsed;
-//   }
-//   return value;
-// };
-
-// const setSchema = new mongoose.Schema(
-//   {
-//     id: {
-//       type: Number,
-//       required: true,
-//       set: validateIntegerId,
-//       validate: {
-//         validator: Number.isInteger,
-//         message: 'Set ID must be an integer'
-//       }
-//     },
-//     weight: { type: String, default: "" },
-//     reps: { type: String, default: "" },
-//   },
-//   { _id: false }
-// );
-
-// const exerciseSchema = new mongoose.Schema(
-//   {
-//     id: {
-//       type: Number,
-//       required: true,
-//       set: validateIntegerId,
-//       validate: {
-//         validator: Number.isInteger,
-//         message: 'Exercise ID must be an integer'
-//       }
-//     },
-//     name: { type: String, required: true },
-//     muscle: { type: String, required: true },
-//     unit: { type: String, default: "KG" },
-//     sets: { type: [setSchema], default: [] },
-//     notes: { type: String, default: "" },
-//   },
-//   { _id: false }
-// );
-
-// const daySchema = new mongoose.Schema(
-//   {
-//     id: {
-//       type: Number,
-//       required: true,
-//       set: validateIntegerId,
-//       validate: {
-//         validator: Number.isInteger,
-//         message: 'Day ID must be an integer'
-//       }
-//     },
-//     exercises: { type: [exerciseSchema], default: [] },
-//   },
-//   { _id: false }
-// );
-
-// const programInfoSchema = new mongoose.Schema(
-//   {
-//     days: { type: [daySchema], default: [] },
-//   },
-//   { _id: false }
-// );
-
-// const programSchema = new mongoose.Schema(
-//   {
-//     title: {
-//       type: String,
-//       required: true,
-//     },
-//     shortLabel: {
-//       type: String,
-//     },
-//     summary: {
-//       type: String,
-//     },
-//     description: {
-//       type: String,
-//     },
-//     tags: [
-//       {
-//         type: String,
-//       },
-//     ],
-//     durationHint: {
-//       type: String,
-//     },
-//     type: {
-//       type: String,
-//       enum: ["system", "community"],
-//       default: "community",
-//     },
-//     isPublic: {
-//       type: Boolean,
-//       default: true,
-//     },
-//     authorId: {
-//       type: mongoose.Schema.Types.ObjectId,
-//       ref: "users",
-//       default: null,
-//     },
-//     authorName: {
-//       type: String,
-//     },
-//     rating: {
-//       type: Number,
-//       default: 0,
-//     },
-//     ratingCount: {
-//       type: Number,
-//       default: 0,
-//     },
-//     programInfo: {
-//       type: programInfoSchema,
-//       default: () => ({ days: [] }),
-//     },
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// // 2. SECOND: Add middleware to the schema (AFTER schema is defined)
-
-// programSchema.pre('save', async function () {
-//   if (this.programInfo && this.programInfo.days) {
-//     // Clean all IDs to ensure they're integers
-//     this.programInfo.days.forEach((day, dayIndex) => {
-//       day.id = Math.floor(day.id) || dayIndex + 1;
-
-//       if (day.exercises) {
-//         day.exercises.forEach((exercise, exIndex) => {
-//           exercise.id = Math.floor(exercise.id) || exIndex + 1;
-
-//           if (exercise.sets) {
-//             exercise.sets.forEach((set, setIndex) => {
-//               set.id = Math.floor(set.id) || setIndex + 1;
-//             });
-//           }
-//         });
-//       }
 // Handle MongoDB connection events
 mongoose.connection.on("error", (err) => {
     console.error("[MONGO ERROR] MongoDB connection error:", {
@@ -272,9 +77,8 @@ mongoose.connection.on("reconnected", () => {
 });
 
 
-// Category Schema (still defined here as it's only used in index.js)
+// Category Schema (defined here as it's only used in index.js)
 const categorySchema = new mongoose.Schema({
-    // Collection: categories
     label: {
         type: String, // e.g., "Hypertrophy"
         required: true,
@@ -290,8 +94,8 @@ const categorySchema = new mongoose.Schema({
     },
 });
 
-// Note: ProgramModel and ProgramInfoModel are now imported from ./models/Program.js
-// const CategoryModel = mongoose.model("categories", categorySchema);
+// Create CategoryModel (UserModel and ProgramModel are imported from their respective files)
+const CategoryModel = mongoose.model("categories", categorySchema);
 
 // Routes
 app.get("/", (req, res) => {
@@ -314,8 +118,48 @@ app.get("/getUsers", async (req, res) => {
 });
 
 app.get("/getPrograms", async (req, res) => {
-    const programData = await ProgramModel.find();
-    res.json(programData);
+    try {
+        // Get user ID from token if authenticated (optional)
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        let userId = null;
+
+        if (token && process.env.JWT_SECRET) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                userId = decoded.userId ? new mongoose.Types.ObjectId(decoded.userId) : null;
+            } catch (err) {
+                // Invalid or expired token - treat as unauthenticated
+                userId = null;
+            }
+        }
+
+        // Build query filter based on visibility rules:
+        // 1. Public programs (isPublic: true) - visible to everyone
+        // 2. Private programs (isPublic: false) - only visible to author
+        const query = {
+            $or: [
+                { isPublic: true },
+                ...(userId ? [{ isPublic: false, authorId: userId }] : [])
+            ]
+        };
+
+        console.log("[GET PROGRAMS] Fetching programs with filter:", {
+            userId: userId ? userId.toString() : "none (unauthenticated)",
+            query: JSON.stringify(query)
+        });
+
+        const programData = await ProgramModel.find(query);
+        
+        console.log("[GET PROGRAMS] Returning", programData.length, "programs");
+        res.json(programData);
+    } catch (error) {
+        console.error("[GET PROGRAMS ERROR] Failed to fetch programs:", error);
+        res.status(500).json({ 
+            error: "Failed to fetch programs",
+            message: error.message 
+        });
+    }
 });
 
 app.get("/getCategories", async (req, res) => {
@@ -327,62 +171,7 @@ app.get("/getCategories", async (req, res) => {
 // POST routes (create / update)
 // ================================
 
-// Create a new user
-// app.post("/users", async (req, res) => {
-//   try {
-//     const { username, email, role } = req.body;
-
-//     const user = new UserModel({
-//       username,
-//       email,
-//       role,
-//     });
-//   }
-// });
-
-// const categorySchema = new mongoose.Schema({
-//   label: {
-//     type: String,
-//     required: true,
-//   },
-//   slug: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//   },
-//   type: {
-//     type: String,
-//     required: true,
-//   },
-// });
-
-// 3. THIRD: Create models from schemas
-const UserModel = mongoose.model("users", userSchema);
-const ProgramModel = mongoose.model("programs", programSchema);
-// const ProgramInfoModel = mongoose.model("programsInfo", programSchema);
-const CategoryModel = mongoose.model("categories", categorySchema);
-
-// 4. FOURTH: Define your routes (keep existing routes)
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-app.get("/getUsers", async (req, res) => {
-  const userData = await UserModel.find();
-  res.json(userData);
-});
-
-app.get("/getPrograms", async (req, res) => {
-  const programData = await ProgramModel.find();
-  res.json(programData);
-});
-
-app.get("/getCategories", async (req, res) => {
-  const categoryData = await CategoryModel.find();
-  res.json(categoryData);
-});
-
-// 5. UPDATED POST /programs route with ID normalization
+// POST /programs route with ID normalization
 app.post("/programs", async (req, res) => {
   try {
     console.log("=== Received POST /programs ===");
@@ -468,7 +257,6 @@ app.post("/programs", async (req, res) => {
   }
 });
 
-// Keep all your other existing routes below...
 app.post("/users", async (req, res) => {
   try {
     const { username, email, role } = req.body;
@@ -514,26 +302,3 @@ app.post("/categories", async (req, res) => {
     res.status(400).json({ message: "Failed to create category", error: error.message });
   }
 });
-
-// app.post("/users/:id/saved-programs", async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { programId, status } = req.body;
-
-//     const user = await UserModel.findById(id);
-//     if (!user) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-
-//     user.savedPrograms.push({
-//       programId,
-//       status: status || "active",
-//     });
-
-//     const updatedUser = await user.save();
-//     res.json(updatedUser);
-//   } catch (error) {
-//     console.error("Error adding saved program:", error);
-//     res.status(400).json({ message: "Failed to add saved program", error: error.message });
-//   }
-// });

@@ -24,7 +24,8 @@ export default function SignUp({ onBack, onSignUp, onOpenLogin, onOpenAdminLogin
 
       const data = await response.json();
 
-      if (data.success) {
+      // Check both response status and data.success
+      if (response.ok && data.success) {
         // Store token
         localStorage.setItem("token", data.data.token);
         // Call parent callback with user data
@@ -35,6 +36,7 @@ export default function SignUp({ onBack, onSignUp, onOpenLogin, onOpenAdminLogin
         setError(data.message || "Signup failed");
       }
     } catch (err) {
+      console.error("Signup error:", err);
       setError("Network error. Please try again.");
     } finally {
       setLoading(false);
