@@ -1,11 +1,13 @@
 import React from 'react';
 import ExerciseCreation from '../ExerciseCreation/ExerciseCreation';
+import Rating from '../Rating/Rating';
 import './ProgramDetail.css';
 
-const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify, onSave }) => {
+const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify, onSave, programId, onRatingSubmit }) => {
   const [days, setDays] = React.useState(programData?.days || []);
   const [activeDayId, setActiveDayId] = React.useState(days.length > 0 ? days[0].id : 1);
   const [name, setName] = React.useState(scheduleName || '');
+  const [showRating, setShowRating] = React.useState(false);
 
   // Keep local state in sync when programData changes (e.g., switching via sidebar quicklinks)
   React.useEffect(() => {
@@ -13,6 +15,8 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
     setDays(nextDays);
     setActiveDayId(nextDays.length > 0 ? nextDays[0].id : 1);
     setName(scheduleName || '');
+    // Reset rating visibility when switching programs
+    setShowRating(false);
   }, [programData, scheduleName]);
 
   const activeDay = days.find(d => d.id === activeDayId);
@@ -34,6 +38,17 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
   const handleModify = () => {
     if (onModify) {
       onModify();
+    }
+  };
+
+  const handleRatingToggle = () => {
+    setShowRating(!showRating);
+  };
+
+  const handleRatingSubmit = (ratingValue) => {
+    if (onRatingSubmit && programId) {
+      onRatingSubmit(programId, ratingValue);
+      setShowRating(false);
     }
   };
 
@@ -74,6 +89,15 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
                 Modify
               </button>
             )}
+            {programId && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handleRatingToggle}
+              >
+                {showRating ? 'Hide Rating' : 'Rate this Program'}
+              </button>
+            )}
             <button
               type="button"
               className="btn btn-primary"
@@ -83,6 +107,18 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
             </button>
           </div>
         </div>
+
+        {showRating && programId && (
+          <div className="program-detail__rating-section">
+            <Rating
+              defaultValue={0}
+              onChange={(value) => console.log('Rating changed:', value)}
+              onSubmit={handleRatingSubmit}
+              size="md"
+              label="What is your opinion on this workout?"
+            />
+          </div>
+        )}
 
         <div className="program-detail__content">
           {activeDay && activeDay.exercises.length > 0 ? (
