@@ -118,7 +118,7 @@
 
 .exercise-creation__sets-header {
   display: grid;
-  grid-template-columns: 40px 1fr 1.8fr 120px 40px;
+  grid-template-columns: 40px 1fr 1fr auto;
   gap: 0.5rem 2rem;
   padding: 0.5rem 0;
   margin-bottom: 0.75rem;
@@ -131,17 +131,13 @@
 }
 
 .exercise-creation__header-reps {
-  grid-column: 3;
-  text-align: center;
-}
-
-.exercise-creation__header-video {
-  grid-column: 4;
+  grid-column: 3; 
+  text-align: left;
 }
 
 .exercise-creation__set-row {
   display: grid;
-  grid-template-columns: 40px 1fr 1.8fr 120px 40px;
+  grid-template-columns: 40px 1fr 1fr auto;
   gap: 0.5rem 2rem;
   align-items: center;
   padding: 0.75rem 0;
@@ -170,44 +166,23 @@
 .exercise-creation__set-input::placeholder {
 }
 
-.exercise-creation__set-qr {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-}
-
-.exercise-creation__qr-placeholder {
-  width: 80px;
-  height: 80px;
+.exercise-creation__delete-set-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-.exercise-creation__set-menu-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.exercise-creation__set-menu-btn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: var(--bg-secondary, #f8f9fa);
+  color: var(--text-primary, #1a1a1a);
 }
 
-.exercise-creation__set-menu-btn:hover {
+.exercise-creation__delete-set-btn:hover {
+  background: var(--bg-hover, #f0f0f0);
+  border-color: var(--error-color, #dc3545);
+  color: var(--error-color, #dc3545);
 }
 
 .exercise-creation__add-set {
@@ -262,13 +237,13 @@
 
   .exercise-creation__sets-header,
   .exercise-creation__set-row {
-    grid-template-columns: 30px 1fr 1fr 80px 30px;
+    grid-template-columns: 30px 1fr 1fr auto;
     gap: 0.5rem;
   }
 
-  .exercise-creation__qr-placeholder {
-    width: 60px;
-    height: 60px;
+  .exercise-creation__delete-set-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
   }
 }
 

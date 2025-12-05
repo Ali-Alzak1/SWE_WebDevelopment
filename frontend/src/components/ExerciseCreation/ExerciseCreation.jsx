@@ -18,7 +18,6 @@ const ExerciseCreation = ({
   ]);
   const [notes, setNotes] = useState(exerciseData?.notes || '');
   const [showExerciseMenu, setShowExerciseMenu] = useState(false);
-  const [showSetMenu, setShowSetMenu] = useState(null);
 
   const exerciseName = exerciseData?.name || exerciseData || '';
 
@@ -38,7 +37,6 @@ const ExerciseCreation = ({
   const handleDeleteSet = (setId) => {
     const newSets = sets.filter(s => s.id !== setId);
     setSets(newSets);
-    setShowSetMenu(null);
     if (onUpdate) {
       onUpdate({ sets: newSets, unit, notes });
     }
@@ -193,7 +191,6 @@ const ExerciseCreation = ({
         <div className="exercise-creation__sets-header">
           <span className="exercise-creation__header-weight">Weight</span>
           <span className="exercise-creation__header-reps">Reps</span>
-          <span className="exercise-creation__header-video">Video</span>
         </div>
         {sets.map((set, index) => (
           <div key={set.id} className="exercise-creation__set-row">
@@ -222,52 +219,14 @@ const ExerciseCreation = ({
                 handleSetChange(set.id, 'reps', value);
               }}
             />
-            <div className="exercise-creation__set-qr">
-              <div className="exercise-creation__qr-placeholder">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7"></rect>
-                  <rect x="14" y="3" width="7" height="7"></rect>
-                  <rect x="3" y="14" width="7" height="7"></rect>
-                  <path d="M14 14h7v7"></path>
-                  <path d="M14 17h7"></path>
-                </svg>
-              </div>
-            </div>
-            <div className="exercise-creation__set-menu-wrapper">
-              <button
-                type="button"
-                className="exercise-creation__set-menu-btn"
-                onClick={() => setShowSetMenu(showSetMenu === set.id ? null : set.id)}
-                aria-label={`Options for set ${index + 1}`}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="1"></circle>
-                  <circle cx="12" cy="5" r="1"></circle>
-                  <circle cx="12" cy="19" r="1"></circle>
-                </svg>
-              </button>
-              {showSetMenu === set.id && (
-                <>
-                  <div
-                    className="exercise-creation__menu-backdrop"
-                    onClick={() => setShowSetMenu(null)}
-                  />
-                  <div className="exercise-creation__menu exercise-creation__menu--set">
-                    <button
-                      type="button"
-                      className="exercise-creation__menu-item"
-                      onClick={() => handleDeleteSet(set.id)}
-                    >
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      </svg>
-                      Delete Set
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
+            <button
+              type="button"
+              className="exercise-creation__delete-set-btn"
+              onClick={() => handleDeleteSet(set.id)}
+              aria-label={`Delete set ${index + 1}`}
+            >
+              Delete Set
+            </button>
           </div>
         ))}
         <div className="exercise-creation__add-set">
