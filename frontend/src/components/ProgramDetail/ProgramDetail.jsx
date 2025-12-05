@@ -30,7 +30,8 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
       onSave({
         name: name || 'Untitled Schedule',
         days: days,
-        isBuiltIn: !isEditable
+        isBuiltIn: !isEditable,
+        programId: programId // ✅ Always pass programId so save works even without modifying
       });
     }
   };
@@ -92,7 +93,7 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
             {programId && (
               <button
                 type="button"
-                className="btn btn-outline-secondary"
+                className="btn btn-primary"
                 onClick={handleRatingToggle}
               >
                 {showRating ? 'Hide Rating' : 'Rate this Program'}
