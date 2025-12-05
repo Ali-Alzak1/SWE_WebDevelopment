@@ -53,6 +53,29 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
     }
   };
 
+  const handleShareProgram = () => {
+    // Share program functionality (no backend for now)
+    const programUrl = window.location.href;
+    const programTitle = name || 'Untitled Schedule';
+    
+    if (navigator.share) {
+      navigator.share({
+        title: programTitle,
+        text: `Check out this workout program: ${programTitle}`,
+        url: programUrl
+      }).catch((err) => {
+        console.log('Error sharing:', err);
+        // Fallback to clipboard
+        navigator.clipboard.writeText(programUrl);
+        alert('Program link copied to clipboard!');
+      });
+    } else {
+      // Fallback to clipboard
+      navigator.clipboard.writeText(programUrl);
+      alert('Program link copied to clipboard!');
+    }
+  };
+
   return (
     <div className="program-detail">
       <div className="container">
@@ -96,9 +119,16 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
                 className="btn btn-primary"
                 onClick={handleRatingToggle}
               >
-                {showRating ? 'Hide Rating' : 'Rate this Program'}
+                {showRating ? 'Hide Rating' : 'Rate Program'}
               </button>
             )}
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleShareProgram}
+            >
+              Share Program
+            </button>
             <button
               type="button"
               className="btn btn-primary"
