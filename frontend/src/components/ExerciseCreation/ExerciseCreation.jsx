@@ -8,7 +8,8 @@ const ExerciseCreation = ({
   onEdit,
   onDelete,
   onShare,
-  onUpdate
+  onUpdate,
+  isEditable = true
 }) => {
   const [unit, setUnit] = useState(exerciseData?.unit || 'KG');
   const [sets, setSets] = useState(exerciseData?.sets || [
@@ -223,6 +224,7 @@ const ExerciseCreation = ({
               type="button"
               className="exercise-creation__delete-set-btn"
               onClick={() => handleDeleteSet(set.id)}
+              disabled={!isEditable}
               aria-label={`Delete set ${index + 1}`}
             >
               Delete Set

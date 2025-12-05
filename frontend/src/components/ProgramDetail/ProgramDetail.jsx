@@ -134,6 +134,7 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
                     onDelete={undefined}
                     onShare={undefined}
                     onUpdate={undefined}
+                    isEditable={isEditable}
                   />
                 ))}
               </div>

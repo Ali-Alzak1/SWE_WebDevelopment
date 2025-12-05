@@ -179,10 +179,18 @@
   color: var(--text-primary, #1a1a1a);
 }
 
-.exercise-creation__delete-set-btn:hover {
+.exercise-creation__delete-set-btn:hover:not(:disabled) {
   background: var(--bg-hover, #f0f0f0);
   border-color: var(--error-color, #dc3545);
   color: var(--error-color, #dc3545);
+}
+
+.exercise-creation__delete-set-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bg-secondary, #f8f9fa);
+  border-color: var(--border-color, #e0e0e0);
+  color: var(--text-secondary, #666);
 }
 
 .exercise-creation__add-set {
