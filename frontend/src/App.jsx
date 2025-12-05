@@ -120,6 +120,7 @@ function App() {
   const [programDetailView, setProgramDetailView] = useState(null); // 'modal' or 'detail'
   const [theme, setTheme] = useState('dark');
   const [selectedBuiltInProgram, setSelectedBuiltInProgram] = useState(null);
+  const [currentProgramId, setCurrentProgramId] = useState(null); // Track which program is currently being viewed
   const [currentView, setCurrentView] = useState(null); // 'login', 'signup', 'admin-login', 'admin-dashboard'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -361,6 +362,7 @@ function App() {
     setSelectedProgram(null);
     setSelectedBuiltInProgram(null);
     setProgramDetailView(null);
+    setCurrentProgramId(null);
 
     // Check both programs array and vaultItems for the program
     let program = programs.find(p => p.id === id);
@@ -377,6 +379,7 @@ function App() {
       // If program has programInfo (even empty), go to detail view
       if (program.programInfo) {
         setSelectedBuiltInProgram(program.programInfo);
+        setCurrentProgramId(program.id); // Track which program we're viewing
         setProgramDetailView('detail');
         return;
       }
@@ -392,6 +395,7 @@ function App() {
     setIsProgramDetailOpen(false);
     setSelectedProgram(null);
     setProgramDetailView(null);
+    setCurrentProgramId(null);
   };
 
   const handleOpenProgramDetail = (programKey) => {
@@ -415,29 +419,31 @@ function App() {
     if (program && program.programInfo && Array.isArray(program.programInfo.days)) {
       // Program has programInfo with days - route to detail page
       setSelectedBuiltInProgram(program.programInfo);
+      setCurrentProgramId(program.id); // Track which program we're viewing
       setCurrentPage('program-detail');
       return;
     }
 
-    // For programs without programInfo or with empty days, show builder
+    // For programs without programInfo or with empty days, go to builder
     if (program) {
       // If it's a system program, try to get template
       const template = getBuiltInProgramTemplate(program.title);
       if (template) {
         setSelectedBuiltInProgram(template);
+        setCurrentProgramId(program.id); // Track which program we're viewing
         setCurrentPage('program-detail');
         return;
       }
       
-      // Otherwise, go to builder with empty program
+      // Otherwise, go to builder with empty program (for community programs without programInfo)
       setSelectedBuiltInProgram(null);
       setCurrentPage('jadwal-builder');
       return;
     }
 
-    // Fallback: show empty detail page
-    setProgramDetailView('detail');
-    setCurrentPage('program-detail');
+    // If program not found at all, go to builder to create new
+    setSelectedBuiltInProgram(null);
+    setCurrentPage('jadwal-builder');
   };
 
   const handleSearch = (query) => {
@@ -448,11 +454,60 @@ function App() {
     console.log('Category clicked:', id);
   };
 
-  const handleRatingSubmit = (value) => {
-    console.log('Rating submitted:', value, 'for program:', selectedProgram?.id);
-    alert(`Thank you! You rated "${selectedProgram?.title}" ${value} out of 5 stars.`);
-    // Close modal after rating
-    handleCloseProgramModal();
+  const handleRatingSubmit = async (programId, ratingValue) => {
+    console.log('Rating submitted:', ratingValue, 'for program:', programId);
+    
+    try {
+      // Find the program to get its current rating data
+      const program = programs.find(p => p.id === programId) || vaultItems.find(p => p.id === programId);
+      
+      if (!program) {
+        throw new Error('Program not found');
+      }
+
+      // Calculate new average rating
+      const currentRating = program.rating || 0;
+      const currentCount = program.ratingCount || 0;
+      const totalRating = currentRating * currentCount + ratingValue;
+      const newCount = currentCount + 1;
+      const newRating = totalRating / newCount;
+
+      // Update rating on backend
+      const response = await fetch(`${API_BASE_URL}/programs/${programId}/rating`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rating: newRating,
+          ratingCount: newCount,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+      }
+
+      // Update local state
+      const updatedPrograms = programs.map(p => 
+        p.id === programId 
+          ? { ...p, rating: newRating, ratingCount: newCount }
+          : p
+      );
+      setPrograms(updatedPrograms);
+
+      // Update vault items if this program is in vault
+      const updatedVaultItems = vaultItems.map(p =>
+        p.id === programId
+          ? { ...p, rating: newRating, ratingCount: newCount }
+          : p
+      );
+      setVaultItems(updatedVaultItems);
+
+      alert(`Thank you! You rated "${program.title}" ${ratingValue} out of 5 stars.`);
+    } catch (err) {
+      console.error('Failed to submit rating:', err);
+      alert(`Failed to submit rating. Please try again. Error: ${err.message}`);
+    }
   };
 
   const categoriesWithIcons = categories.map(cat => ({
@@ -473,6 +528,7 @@ function App() {
     const template = getBuiltInProgramTemplate(program.title);
     if (template) {
       setSelectedBuiltInProgram(template);
+      setCurrentProgramId(program.id); // Track which program we're viewing
       setCurrentPage('program-detail');
     }
   };
@@ -754,11 +810,13 @@ function App() {
                 programData={selectedBuiltInProgram}
                 scheduleName=""
                 isEditable={false}
+                programId={currentProgramId}
                 onModify={() => {
                   // Switch to builder mode - keep the same program data
                   setCurrentPage('jadwal-builder');
                 }}
                 onSave={handleSaveToVault}
+                onRatingSubmit={handleRatingSubmit}
               />
             )}
             {currentPage === 'vault' && (
@@ -766,12 +824,6 @@ function App() {
                 vaultItems={vaultItems}
                 onOpenProgram={handleOpenProgram}
               />
-            )}
-            {currentPage === 'program-detail' && programDetailView === 'detail' && (
-              <div className="container py-5">
-                <h1>Program Details</h1>
-                <p>Program detail interface will go here (programDetails.jsx).</p>
-              </div>
             )}
           </>
         )}

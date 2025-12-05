@@ -302,3 +302,32 @@ app.post("/categories", async (req, res) => {
     res.status(400).json({ message: "Failed to create category", error: error.message });
   }
 });
+
+
+// POST /programs/:id/rating - Update program rating
+app.post("/programs/:id/rating", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating, ratingCount } = req.body;
+
+    const program = await ProgramModel.findByIdAndUpdate(
+      id,
+      { 
+        $set: { 
+          rating: rating || 0,
+          ratingCount: ratingCount || 0
+        } 
+      },
+      { new: true }
+    );
+
+    if (!program) {
+      return res.status(404).json({ message: "Program not found" });
+    }
+
+    res.json(program);
+  } catch (error) {
+    console.error("Error updating program rating:", error);
+    res.status(400).json({ message: "Failed to update program rating", error: error.message });
+  }
+});
