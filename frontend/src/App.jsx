@@ -371,7 +371,7 @@ function App() {
       return;
     }
 
-    // For programs without programInfo or with empty days, show builder
+    // For programs without programInfo or with empty days, go to builder
     if (program) {
       // If it's a system program, try to get template
       const template = getBuiltInProgramTemplate(program.title);
@@ -381,15 +381,15 @@ function App() {
         return;
       }
       
-      // Otherwise, go to builder with empty program
+      // Otherwise, go to builder with empty program (for community programs without programInfo)
       setSelectedBuiltInProgram(null);
       setCurrentPage('jadwal-builder');
       return;
     }
 
-    // Fallback: show empty detail page
-    setProgramDetailView('detail');
-    setCurrentPage('program-detail');
+    // If program not found at all, go to builder to create new
+    setSelectedBuiltInProgram(null);
+    setCurrentPage('jadwal-builder');
   };
 
   const handleSearch = (query) => {
@@ -663,12 +663,6 @@ function App() {
                 vaultItems={vaultItems}
                 onOpenProgram={handleOpenProgram}
               />
-            )}
-            {currentPage === 'program-detail' && programDetailView === 'detail' && (
-              <div className="container py-5">
-                <h1>Program Details</h1>
-                <p>Program detail interface will go here (programDetails.jsx).</p>
-              </div>
             )}
           </>
         )}
