@@ -1,15 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import SearchRow from './SearchRow';
 import PopularProgramsSection from './PopularProgramsSection';
-import CategoriesSection from './CategoriesSection';
 import './GuestHome.css';
 
 const GuestHome = ({
   popularPrograms = [],
-  categories = [],
+  builtInPrograms = [],
   onSearch,
   onOpenProgram,
-  onCategoryClick,
   onThemeToggle,
   currentTheme = 'dark',
   onLoginClick,
@@ -66,9 +64,10 @@ const GuestHome = ({
           onOpenProgram={onOpenProgram}
         />
 
-        <CategoriesSection
-          categories={categories}
-          onCategoryClick={onCategoryClick}
+        <PopularProgramsSection
+          programs={builtInPrograms}
+          onOpenProgram={onOpenProgram}
+          heading="Built-In Programs"
         />
       </div>
     </section>

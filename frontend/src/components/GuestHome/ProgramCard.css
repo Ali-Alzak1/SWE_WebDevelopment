@@ -149,3 +149,62 @@
   border-radius: 999px;
 }
 
+/* Consistent sizing for jadwal-program-card */
+.jadwal-program-card {
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  height: 100%;
+  overflow: visible;
+}
+
+.jadwal-program-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 3rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.jadwal-program-card p {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 4.5rem;
+}
+
+.jadwal-program-card__meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.jadwal-program-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.jadwal-program-card:hover,
+.jadwal-program-card:focus-visible {
+  transform: translateY(-4px);
+}
+

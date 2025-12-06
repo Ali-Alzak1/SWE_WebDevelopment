@@ -3,7 +3,6 @@ import { Routes, Route, useNavigate, useLocation, useSearchParams, useParams } f
 import SideBar from './components/SideBar/SideBar';
 import GuestHome from './components/GuestHome/GuestHome';
 import ProgramDetailModal from './components/ProgramDetailModal/ProgramDetailModal';
-import JadwalCreationPage from './components/JadwalCreation/JadwalCreation';
 import JadwalBuilder from './components/JadwalBuilder/JadwalBuilder';
 import ProgramDetail from './components/ProgramDetail/ProgramDetail';
 import Vault from './components/Vault/Vault';
@@ -502,9 +501,15 @@ function App() {
     if (key === 'home') {
       navigate('/');
       setCurrentPage('home');
+    } else if (key === 'create') {
+      // Go directly to jadwal-builder for creating custom programs
+      navigate('/');
+      setSelectedBuiltInProgram(null);
+      setCurrentProgramId(null);
+      setCurrentPage('jadwal-builder');
     } else {
       // For other pages, navigate to home and set the page state
-      // (since account, create, vault are shown within the home route)
+      // (since account, vault are shown within the home route)
       navigate('/');
       setCurrentPage(key);
     }
@@ -872,10 +877,9 @@ function App() {
                   {currentPage === 'home' && (
                     <GuestHome
                       popularPrograms={programs}
-                      categories={categoriesWithIcons}
+                      builtInPrograms={builtInPrograms}
                       onSearch={handleSearch}
                       onOpenProgram={handleOpenProgram}
-                      onCategoryClick={handleCategoryClick}
                       onThemeToggle={handleThemeToggle}
                       currentTheme={theme}
                       onLoginClick={() => navigate('/registration?mode=login')}
@@ -894,22 +898,15 @@ function App() {
                         }}
                       />
                     )}
-                    {currentPage === 'create' && (
-                      <JadwalCreationPage
-                        programs={builtInPrograms}
-                        categories={creationCategories}
-                        onSelectProgram={handleSelectBuiltInProgram}
-                        onCreateCustom={handleCreateCustomJadwal}
-                      />
-                    )}
                     {currentPage === 'jadwal-builder' && (
                       <JadwalBuilder
                         builtInProgram={selectedBuiltInProgram}
                         isCustom={!selectedBuiltInProgram}
                         initialCategories={creationCategories}
                         initialScheduleName={
-                          currentProgramId 
-                            ? (programs.find(p => p.id === currentProgramId)?.title || 
+                          selectedBuiltInProgram || currentProgramId
+                            ? (selectedBuiltInProgram?.title ||
+                               programs.find(p => p.id === currentProgramId)?.title || 
                                vaultItems.find(p => p.id === currentProgramId)?.title || 
                                '')
                             : ''

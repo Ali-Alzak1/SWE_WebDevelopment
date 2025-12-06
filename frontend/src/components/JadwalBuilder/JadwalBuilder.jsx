@@ -62,10 +62,14 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
 
   // Sync scheduleName when initialScheduleName prop changes
   useEffect(() => {
+    // If initialScheduleName is provided, use it; otherwise clear it for new programs
     if (initialScheduleName) {
       setScheduleName(initialScheduleName);
+    } else if (!builtInProgram) {
+      // For new custom programs (no builtInProgram and no initialScheduleName), start empty
+      setScheduleName('');
     }
-  }, [initialScheduleName]);
+  }, [initialScheduleName, builtInProgram]);
 
   const activeDay = days.find(d => d.id === activeDayId);
   const hasExercises = activeDay?.exercises.length > 0;
