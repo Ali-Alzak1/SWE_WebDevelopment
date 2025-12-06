@@ -190,9 +190,38 @@ const JadwalBuilder = ({ initialCategories = [], onSave, builtInProgram = null, 
       if (day.id === activeDayId) {
         return {
           ...day,
-          exercises: day.exercises.map(ex =>
-            ex.id === exerciseId ? { ...ex, ...updatedData } : ex
-          )
+          exercises: day.exercises.map(ex => {
+            if (ex.id === exerciseId) {
+              // Create a new exercise object to ensure React detects the change
+              // Ensure sets have proper structure and unique IDs
+              const updatedExercise = { ...ex, ...updatedData };
+              
+              // If sets were updated, ensure they have valid unique IDs
+              if (updatedData.sets && Array.isArray(updatedData.sets)) {
+                const seenIds = new Set();
+                updatedExercise.sets = updatedData.sets.map((set) => {
+                  let setId = set.id;
+                  // Ensure ID is valid number
+                  if (!setId || typeof setId !== 'number' || setId <= 0) {
+                    setId = idGenerator.getSetId();
+                  }
+                  // Check for duplicates and fix them
+                  while (seenIds.has(setId)) {
+                    setId = idGenerator.getSetId();
+                  }
+                  seenIds.add(setId);
+                  return {
+                    id: setId,
+                    weight: set.weight || '',
+                    reps: set.reps || ''
+                  };
+                });
+              }
+              
+              return updatedExercise;
+            }
+            return ex;
+          })
         };
       }
       return day;
