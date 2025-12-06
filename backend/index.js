@@ -151,8 +151,24 @@ app.get("/getPrograms", async (req, res) => {
 
         const programData = await ProgramModel.find(query);
         
-        console.log("[GET PROGRAMS] Returning", programData.length, "programs");
-        res.json(programData);
+        // Recalculate rating and ratingCount from ratings array for consistency
+        const programsWithRecalculatedRatings = programData.map(program => {
+          if (program.ratings && Array.isArray(program.ratings) && program.ratings.length > 0) {
+            const totalRating = program.ratings.reduce((sum, r) => sum + r.rating, 0);
+            const averageRating = totalRating / program.ratings.length;
+            program.rating = Math.round(averageRating * 10) / 10; // Round to 1 decimal place
+            program.ratingCount = program.ratings.length;
+          } else if (program.ratings && Array.isArray(program.ratings) && program.ratings.length === 0) {
+            // No ratings yet
+            program.rating = 0;
+            program.ratingCount = 0;
+          }
+          // If ratings array doesn't exist, keep existing rating/ratingCount (for backward compatibility)
+          return program;
+        });
+        
+        console.log("[GET PROGRAMS] Returning", programsWithRecalculatedRatings.length, "programs");
+        res.json(programsWithRecalculatedRatings);
     } catch (error) {
         console.error("[GET PROGRAMS ERROR] Failed to fetch programs:", error);
         res.status(500).json({ 
@@ -213,6 +229,18 @@ app.get("/programs/:id", async (req, res) => {
                 error: "Access denied",
                 message: "This program is private and you don't have permission to view it"
             });
+        }
+
+        // Recalculate rating and ratingCount from ratings array for consistency
+        if (program.ratings && Array.isArray(program.ratings) && program.ratings.length > 0) {
+          const totalRating = program.ratings.reduce((sum, r) => sum + r.rating, 0);
+          const averageRating = totalRating / program.ratings.length;
+          program.rating = Math.round(averageRating * 10) / 10; // Round to 1 decimal place
+          program.ratingCount = program.ratings.length;
+        } else if (program.ratings && Array.isArray(program.ratings) && program.ratings.length === 0) {
+          // No ratings yet
+          program.rating = 0;
+          program.ratingCount = 0;
         }
 
         console.log("[GET PROGRAM BY ID] Returning program:", {

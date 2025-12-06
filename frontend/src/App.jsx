@@ -200,46 +200,37 @@ function ProgramPageWrapper({
     );
   }
 
-  // If program has programInfo, show detail view
-  if (program.programInfo && Array.isArray(program.programInfo.days) && program.programInfo.days.length > 0) {
-    // Check if program is in vault
-    const isFromVault = vaultItems.some(v => v.id === program.id);
-    
-    return (
-      <ProgramDetail
-        programData={program.programInfo}
-        scheduleName={program.title}
-        isEditable={false}
-        programId={program.id}
-        onModify={() => {
-          // Navigate to builder with program data for modification
-          if (onModifyProgram) {
-            onModifyProgram(program.programInfo, program.id, program.title);
-          } else {
-            navigate('/');
-          }
-        }}
-        onSave={onSaveToVault}
-        onRatingSubmit={onRatingSubmit}
-        isFromVault={isFromVault}
-        onDelete={onDeleteFromVault}
-      />
-    );
+  // Check if program is in vault
+  const isFromVault = vaultItems.some(v => v.id === program.id);
+  
+  // If program has programInfo (even if empty), show detail view
+  // If no programInfo, create empty structure so user can add exercises
+  const programInfo = program.programInfo || { days: [] };
+  
+  // If no days exist, create a default day so user can add exercises
+  if (!Array.isArray(programInfo.days) || programInfo.days.length === 0) {
+    programInfo.days = [{ id: 1, exercises: [] }];
   }
-
-  // If program doesn't have programInfo, show modal-like view or redirect
+  
   return (
-    <div className="container py-5">
-      <div className="alert alert-info">
-        <h3>{program.title}</h3>
-        <p>By {program.author}</p>
-        <p>{program.summary || program.description || 'No description available.'}</p>
-        <p className="text-muted">This program doesn't have workout details yet.</p>
-        <button className="btn btn-primary" onClick={() => navigate('/')}>
-          Go to Home
-        </button>
-      </div>
-    </div>
+    <ProgramDetail
+      programData={programInfo}
+      scheduleName={program.title}
+      isEditable={false}
+      programId={program.id}
+      onModify={() => {
+        // Navigate to builder with program data for modification
+        if (onModifyProgram) {
+          onModifyProgram(programInfo, program.id, program.title);
+        } else {
+          navigate('/');
+        }
+      }}
+      onSave={onSaveToVault}
+      onRatingSubmit={onRatingSubmit}
+      isFromVault={isFromVault}
+      onDelete={onDeleteFromVault}
+    />
   );
 }
 
@@ -383,6 +374,7 @@ function App() {
             title: p.title,
             author: p.authorName || 'System',
             rating: typeof p.rating === 'number' ? p.rating : 0,
+            ratingCount: typeof p.ratingCount === 'number' ? p.ratingCount : 0, // ✅ Add ratingCount
             summary: p.summary || p.description || '',
             shortLabel: p.shortLabel || '',
             durationHint: p.durationHint || '',
@@ -756,8 +748,53 @@ function App() {
     console.log('Saving to vault:', schedule);
 
     try {
-      if (currentUser?._id && schedule?.programId) {
-        // 1. Await the fetch and store the response
+      if (!currentUser?._id) {
+        throw new Error('You must be logged in to save programs');
+      }
+
+      let programIdToSave = schedule?.programId;
+
+      // If the program was modified, create a new copy with the modifications
+      if (schedule?.isModified && schedule?.days) {
+        // Fetch the original program to get its metadata
+        const originalProgram = programs.find(p => p.id === schedule.programId) || 
+                                vaultItems.find(p => p.id === schedule.programId);
+        
+        if (!originalProgram) {
+          throw new Error('Original program not found');
+        }
+
+        // Create a new program with the modified data
+        const programRes = await fetch(`${API_BASE_URL}/programs`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: schedule.name || originalProgram.title,
+            shortLabel: originalProgram.shortLabel || '',
+            summary: originalProgram.summary || '',
+            description: originalProgram.description || '',
+            tags: originalProgram.tags || [],
+            durationHint: originalProgram.durationHint || '',
+            type: 'community', // Modified programs are always community type
+            isPublic: false, // Modified programs are private by default
+            authorId: currentUser._id,
+            authorName: currentUser.username || 'Guest',
+            programInfo: { days: schedule.days || [] },
+          }),
+        });
+
+        if (!programRes.ok) {
+          const errorData = await programRes.json().catch(() => ({}));
+          throw new Error(errorData.message || errorData.error || 'Failed to create modified program');
+        }
+
+        const createdProgram = await programRes.json();
+        programIdToSave = createdProgram._id;
+        console.log('Created modified program copy:', programIdToSave);
+      }
+
+      // Save the program (original or modified copy) to vault
+      if (programIdToSave) {
         const response = await fetch(`${API_BASE_URL}/api/users/${currentUser._id}/saved-programs`, {
           method: 'POST',
           headers: { 
@@ -765,27 +802,23 @@ function App() {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           },
           body: JSON.stringify({
-            programId: schedule.programId,
+            programId: programIdToSave,
             status: 'active',
           }),
         });
 
-        // 2. CHECK THE RESPONSE STATUS
         if (!response.ok) {
-          // If status is 4xx or 5xx, throw an error to go to the catch block
-          const errorData = await response.json(); // Attempt to read error message from body
+          const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
         }
 
-        // 3. ONLY run success alert if response.ok is true
         alert(`Schedule "${schedule.name}" saved to vault!`);
-        
-        // 4. Refresh vault items to show the newly saved program
         await refreshVaultItems();
+      } else {
+        throw new Error('No program ID to save');
       }
     } catch (err) {
       console.error(err);
-      // Use the error message from the response if available
       alert(`Failed to save schedule. Please try again. Error: ${err.message}`);
     }
   };

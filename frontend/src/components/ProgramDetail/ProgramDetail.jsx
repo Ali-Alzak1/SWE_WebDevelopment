@@ -1,6 +1,9 @@
 import React from 'react';
 import ExerciseCreation from '../ExerciseCreation/ExerciseCreation';
 import Rating from '../Rating/Rating';
+import MuscleSelection from '../MuscleSelection/MuscleSelection';
+import ExerciseSelection from '../ExerciseSelection/ExerciseSelection';
+import { idGenerator } from '../../utils/idGenerator';
 import './ProgramDetail.css';
 
 const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditable = false, onModify, onSave, programId, onRatingSubmit, isFromVault = false, onDelete }) => {
@@ -9,6 +12,10 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
   const [name, setName] = React.useState(scheduleName || '');
   const [showRating, setShowRating] = React.useState(false);
   const [isEditable, setIsEditable] = React.useState(initialIsEditable);
+  const [showMuscleSelection, setShowMuscleSelection] = React.useState(false);
+  const [showExerciseSelection, setShowExerciseSelection] = React.useState(false);
+  const [selectedMuscle, setSelectedMuscle] = React.useState(null);
+  const [exerciseToEdit, setExerciseToEdit] = React.useState(null);
 
   // Keep local state in sync when programData changes (e.g., switching via sidebar quicklinks)
   React.useEffect(() => {
@@ -34,7 +41,8 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
         name: name || 'Untitled Schedule',
         days: days,
         isBuiltIn: !isEditable,
-        programId: programId // ✅ Always pass programId so save works even without modifying
+        programId: programId, // ✅ Always pass programId so save works even without modifying
+        isModified: isEditable // ✅ Pass whether the program was modified
       });
     }
   };
@@ -85,6 +93,167 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
       });
     }
   };
+
+  // Exercise management handlers (for modify mode)
+  const handleAddExercise = () => {
+    if (!isEditable) return;
+    setShowMuscleSelection(true);
+  };
+
+  const handleMuscleSelect = (muscle) => {
+    setSelectedMuscle(muscle);
+    setShowMuscleSelection(false);
+    setShowExerciseSelection(true);
+  };
+
+  const handleMuscleSelectionClose = () => {
+    setShowMuscleSelection(false);
+  };
+
+  const handleExerciseSelect = (exercise) => {
+    const exerciseId = idGenerator.getExerciseId();
+    const newExercise = {
+      id: exerciseId,
+      name: exercise,
+      muscle: selectedMuscle,
+      unit: 'KG',
+      sets: [
+        { id: idGenerator.getSetId(), weight: '', reps: '' },
+        { id: idGenerator.getSetId(), weight: '', reps: '' },
+        { id: idGenerator.getSetId(), weight: '', reps: '' }
+      ],
+      notes: ''
+    };
+
+    const updatedDays = days.map(day => {
+      if (day.id === activeDayId) {
+        return {
+          ...day,
+          exercises: [...(day.exercises || []), newExercise]
+        };
+      }
+      return day;
+    });
+    setDays(updatedDays);
+    setShowExerciseSelection(false);
+    setSelectedMuscle(null);
+  };
+
+  const handleExerciseSelectionBack = () => {
+    setShowExerciseSelection(false);
+    setShowMuscleSelection(true);
+  };
+
+  const handleExerciseSelectionClose = () => {
+    setShowExerciseSelection(false);
+    setSelectedMuscle(null);
+  };
+
+  const handleExerciseEdit = (exerciseId) => {
+    if (!isEditable || !activeDay) return;
+    const exercise = activeDay.exercises.find(ex => ex.id === exerciseId);
+    if (exercise) {
+      setExerciseToEdit(exercise);
+      setSelectedMuscle(exercise.muscle);
+      setShowExerciseSelection(true);
+    }
+  };
+
+  const handleExerciseDelete = (exerciseId) => {
+    if (!isEditable) return;
+    const updatedDays = days.map(day => {
+      if (day.id === activeDayId) {
+        return {
+          ...day,
+          exercises: (day.exercises || []).filter(ex => ex.id !== exerciseId)
+        };
+      }
+      return day;
+    });
+    setDays(updatedDays);
+  };
+
+  const handleExerciseUpdate = (exerciseId, updatedData) => {
+    if (!isEditable) return;
+    const updatedDays = days.map(day => {
+      if (day.id === activeDayId) {
+        return {
+          ...day,
+          exercises: (day.exercises || []).map(ex => {
+            if (ex.id === exerciseId) {
+              const updatedExercise = { ...ex, ...updatedData };
+              // Ensure sets have valid unique IDs
+              if (updatedData.sets && Array.isArray(updatedData.sets)) {
+                const seenIds = new Set();
+                updatedExercise.sets = updatedData.sets.map((set) => {
+                  let setId = set.id;
+                  if (!setId || typeof setId !== 'number' || setId <= 0) {
+                    setId = idGenerator.getSetId();
+                  }
+                  while (seenIds.has(setId)) {
+                    setId = idGenerator.getSetId();
+                  }
+                  seenIds.add(setId);
+                  return {
+                    id: setId,
+                    weight: set.weight || '',
+                    reps: set.reps || ''
+                  };
+                });
+              }
+              return updatedExercise;
+            }
+            return ex;
+          })
+        };
+      }
+      return day;
+    });
+    setDays(updatedDays);
+  };
+
+  const handleExerciseSelectForEdit = (exercise) => {
+    if (exerciseToEdit) {
+      const updatedDays = days.map(day => {
+        if (day.id === activeDayId) {
+          return {
+            ...day,
+            exercises: (day.exercises || []).map(ex =>
+              ex.id === exerciseToEdit.id
+                ? { ...ex, name: exercise, muscle: selectedMuscle }
+                : ex
+            )
+          };
+        }
+        return day;
+      });
+      setDays(updatedDays);
+      setExerciseToEdit(null);
+    }
+    setShowExerciseSelection(false);
+    setSelectedMuscle(null);
+  };
+
+  // Show muscle/exercise selection screens when in modify mode
+  if (isEditable && showMuscleSelection) {
+    return (
+      <MuscleSelection
+        onSelect={handleMuscleSelect}
+        onClose={handleMuscleSelectionClose}
+      />
+    );
+  }
+
+  if (isEditable && showExerciseSelection && selectedMuscle) {
+    return (
+      <ExerciseSelection
+        muscle={selectedMuscle}
+        onSelect={exerciseToEdit ? handleExerciseSelectForEdit : handleExerciseSelect}
+        onBack={handleExerciseSelectionBack}
+        onClose={handleExerciseSelectionClose}
+      />
+    );
+  }
 
   return (
     <div className="program-detail">
@@ -184,18 +353,30 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
         )}
 
         <div className="program-detail__content">
-          {activeDay && activeDay.exercises.length > 0 ? (
+          {activeDay && activeDay.exercises && activeDay.exercises.length > 0 ? (
             <div className="program-detail__exercises">
+              {isEditable && (
+                <div className="program-detail__exercises-header" style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3>Exercises</h3>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={handleAddExercise}
+                  >
+                    + Add Exercise
+                  </button>
+                </div>
+              )}
               <div className="program-detail__exercise-list">
                 {activeDay.exercises.map((exercise) => (
                   <ExerciseCreation
                     key={exercise.id}
                     exercise={exercise}
                     muscle={exercise.muscle}
-                    onEdit={undefined}
-                    onDelete={undefined}
+                    onEdit={isEditable ? () => handleExerciseEdit(exercise.id) : undefined}
+                    onDelete={isEditable ? () => handleExerciseDelete(exercise.id) : undefined}
                     onShare={undefined}
-                    onUpdate={undefined}
+                    onUpdate={isEditable ? (updatedData) => handleExerciseUpdate(exercise.id, updatedData) : undefined}
                     isEditable={isEditable}
                   />
                 ))}
@@ -204,6 +385,16 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
           ) : (
             <div className="program-detail__empty">
               <p>No exercises in this day.</p>
+              {isEditable && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddExercise}
+                  style={{ marginTop: '1rem' }}
+                >
+                  + Add Exercise
+                </button>
+              )}
             </div>
           )}
         </div>
