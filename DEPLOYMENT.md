@@ -81,8 +81,45 @@ VITE_API_BASE_URL=https://your-api-domain.com
 - Build command: `npm run build`
 - Output directory: `dist`
 
-### Render / Railway / Heroku (Backend)
+### Render Deployment
+
+#### Option 1: Using render.yaml (Recommended)
+1. The project includes a `render.yaml` file that defines both backend and frontend services
+2. In Render dashboard, go to "New" → "Blueprint"
+3. Connect your GitHub repository
+4. Render will automatically detect `render.yaml` and create both services
+5. Set the following environment variables in each service:
+   
+   **Backend Service:**
+   - `MONGO_URL` - Your MongoDB connection string
+   - `JWT_SECRET` - A strong random string
+   - `ALLOWED_ORIGINS` - Your frontend URL (e.g., `https://jadwal-gym-frontend.onrender.com`)
+   - `PORT` - Usually set automatically by Render
+   
+   **Frontend Service:**
+   - `VITE_API_BASE_URL` - Your backend URL (e.g., `https://jadwal-gym-backend.onrender.com`)
+
+#### Option 2: Manual Service Creation
+
+**Backend Service:**
+1. Create a new "Web Service" in Render
+2. Connect your GitHub repository
+3. Set **Root Directory** to: `backend`
+4. Build Command: `npm install`
+5. Start Command: `npm start`
+6. Set environment variables (MONGO_URL, JWT_SECRET, ALLOWED_ORIGINS, etc.)
+
+**Frontend Service:**
+1. Create a new "Static Site" in Render
+2. Connect your GitHub repository
+3. Set **Root Directory** to: `frontend`
+4. Build Command: `npm install && npm run build`
+5. Publish Directory: `dist`
+6. Set environment variable: `VITE_API_BASE_URL` (your backend URL)
+
+### Railway / Heroku (Backend)
 - Set all backend environment variables
+- Set Root Directory to: `backend`
 - Start command: `npm start`
 - Build command: `npm install`
 
