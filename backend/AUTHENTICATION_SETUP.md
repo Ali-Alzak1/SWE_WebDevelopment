@@ -78,10 +78,33 @@ backend/
 └── index.js                 (MODIFIED - Added auth routes)
 ```
 
+## Running the Server
+
+### Development Mode
+For local development with auto-reload on file changes:
+```bash
+npm run dev
+```
+This uses `nodemon` to automatically restart the server when files change.
+
+### Production Mode
+For production deployment:
+```bash
+npm start
+```
+This uses `node` directly (no auto-reload). This is what hosting platforms will use.
+
+**Important:** The `start` script uses `node` (not `nodemon`) which is required for production environments. Development tools like `nodemon` are not suitable for production and can cause issues on hosting platforms.
+
 ## Dependencies
 
 Make sure to install:
 ```bash
 npm install bcrypt jsonwebtoken
+```
+
+For development, `nodemon` is included in `devDependencies` and will be installed with:
+```bash
+npm install
 ```
 
