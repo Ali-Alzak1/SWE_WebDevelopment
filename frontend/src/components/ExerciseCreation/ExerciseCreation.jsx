@@ -96,6 +96,7 @@ const ExerciseCreation = ({
               type="button"
               className={`exercise-creation__unit-btn ${unit === 'KG' ? 'is-active' : ''}`}
               onClick={handleUnitToggle}
+              disabled={!isEditable}
             >
               KG
             </button>
@@ -103,6 +104,7 @@ const ExerciseCreation = ({
               type="button"
               className={`exercise-creation__unit-btn ${unit === 'LBS' ? 'is-active' : ''}`}
               onClick={handleUnitToggle}
+              disabled={!isEditable}
             >
               LBS
             </button>
@@ -172,9 +174,12 @@ const ExerciseCreation = ({
               placeholder="0"
               value={set.weight}
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, '');
-                handleSetChange(set.id, 'weight', value);
+                if (isEditable) {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  handleSetChange(set.id, 'weight', value);
+                }
               }}
+              readOnly={!isEditable}
             />
             <input
               type="text"
@@ -184,9 +189,12 @@ const ExerciseCreation = ({
               placeholder="0"
               value={set.reps}
               onChange={(e) => {
-                const value = e.target.value.replace(/[^0-9]/g, '');
-                handleSetChange(set.id, 'reps', value);
+                if (isEditable) {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  handleSetChange(set.id, 'reps', value);
+                }
               }}
+              readOnly={!isEditable}
             />
             <button
               type="button"
@@ -216,7 +224,12 @@ const ExerciseCreation = ({
           className="exercise-creation__notes-input"
           placeholder="Add notes here..."
           value={notes}
-          onChange={(e) => handleNotesChange(e.target.value)}
+          onChange={(e) => {
+            if (isEditable) {
+              handleNotesChange(e.target.value);
+            }
+          }}
+          readOnly={!isEditable}
         />
       </div>
     </div>

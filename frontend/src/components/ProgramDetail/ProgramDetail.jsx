@@ -3,11 +3,12 @@ import ExerciseCreation from '../ExerciseCreation/ExerciseCreation';
 import Rating from '../Rating/Rating';
 import './ProgramDetail.css';
 
-const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify, onSave, programId, onRatingSubmit, isFromVault = false, onDelete }) => {
+const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditable = false, onModify, onSave, programId, onRatingSubmit, isFromVault = false, onDelete }) => {
   const [days, setDays] = React.useState(programData?.days || []);
   const [activeDayId, setActiveDayId] = React.useState(days.length > 0 ? days[0].id : 1);
   const [name, setName] = React.useState(scheduleName || '');
   const [showRating, setShowRating] = React.useState(false);
+  const [isEditable, setIsEditable] = React.useState(initialIsEditable);
 
   // Keep local state in sync when programData changes (e.g., switching via sidebar quicklinks)
   React.useEffect(() => {
@@ -17,7 +18,9 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
     setName(scheduleName || '');
     // Reset rating visibility when switching programs
     setShowRating(false);
-  }, [programData, scheduleName]);
+    // Reset editable state when program changes
+    setIsEditable(initialIsEditable);
+  }, [programData, scheduleName, initialIsEditable]);
 
   const activeDay = days.find(d => d.id === activeDayId);
 
@@ -37,9 +40,8 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
   };
 
   const handleModify = () => {
-    if (onModify) {
-      onModify();
-    }
+    // Enable editing mode locally - modify in place
+    setIsEditable(true);
   };
 
   const handleRatingToggle = () => {
@@ -112,13 +114,22 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
             ))}
           </div>
           <div className="program-detail__actions">
-            {!isEditable && (
+            {!isEditable ? (
               <button
                 type="button"
                 className="btn btn-outline-primary"
                 onClick={handleModify}
               >
                 Modify
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-outline-primary"
+                disabled
+                style={{ opacity: 0.6, cursor: 'not-allowed' }}
+              >
+                Modifying...
               </button>
             )}
             {programId && (
