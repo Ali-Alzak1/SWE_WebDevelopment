@@ -54,19 +54,56 @@ const corsOptions = {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
         
+        // Check if origin is in allowed list
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            console.warn(`[CORS] Blocked request from origin: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
+            // Check if ALLOWED_ORIGINS includes a wildcard pattern for this domain
+            // For example, if ALLOWED_ORIGINS includes "*.vercel.app", allow any vercel.app subdomain
+            const originHost = new URL(origin).hostname;
+            const isAllowedByPattern = allowedOrigins.some(allowed => {
+                if (allowed.includes('*')) {
+                    const pattern = allowed.replace('*', '.*');
+                    const regex = new RegExp(`^${pattern}$`);
+                    return regex.test(originHost);
+                }
+                return false;
+            });
+            
+            if (isAllowedByPattern) {
+                console.log(`[CORS] Allowing origin by pattern: ${origin}`);
+                callback(null, true);
+            } else {
+                console.warn(`[CORS] Blocked request from origin: ${origin}`);
+                console.warn(`[CORS] Allowed origins: ${allowedOrigins.join(', ')}`);
+                console.warn(`[CORS] To allow this origin, add it to ALLOWED_ORIGINS environment variable`);
+                console.warn(`[CORS] Example: ALLOWED_ORIGINS=https://jadwal-k7yoe6bgh-karraralqallafs-projects.vercel.app`);
+                callback(new Error('Not allowed by CORS'));
+            }
         }
     },
     credentials: true, // Allow cookies and authorization headers
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    // Ensure CORS headers are sent even on error responses
+    optionsSuccessStatus: 200,
 };
 
+// Apply CORS middleware
 app.use(cors(corsOptions));
+
+// Middleware to ensure CORS headers are always set on responses
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.indexOf(origin) !== -1) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
 app.use(express.json());
 
 // Database connection with detailed error handling
@@ -196,8 +233,16 @@ app.get("/getPrograms", async (req, res) => {
 });
 
 app.get("/getCategories", async (req, res) => {
-    const categoryData = await CategoryModel.find();
-    res.json(categoryData);
+    try {
+        const categoryData = await CategoryModel.find();
+        res.json(categoryData);
+    } catch (error) {
+        console.error("[GET CATEGORIES ERROR] Failed to fetch categories:", error);
+        res.status(500).json({ 
+            error: "Failed to fetch categories",
+            message: error.message 
+        });
+    }
 });
 
 // Get a single program by ID (shareable link - public access)
@@ -428,4 +473,34 @@ app.post("/programs/:id/rating", async (req, res) => {
     console.error("Error updating program rating:", error);
     res.status(400).json({ message: "Failed to update program rating", error: error.message });
   }
+});
+
+// Global error handler - must be last middleware
+app.use((err, req, res, next) => {
+    console.error("[GLOBAL ERROR HANDLER]", err);
+    
+    // Ensure CORS headers are set even on errors
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.indexOf(origin) !== -1) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    // Handle CORS errors specifically
+    if (err.message === 'Not allowed by CORS') {
+        return res.status(403).json({
+            error: 'CORS Error',
+            message: 'Origin not allowed by CORS policy',
+            allowedOrigins: allowedOrigins
+        });
+    }
+    
+    // Handle other errors
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        error: err.message || 'Internal Server Error',
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
 });
