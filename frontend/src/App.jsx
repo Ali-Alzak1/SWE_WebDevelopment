@@ -581,7 +581,7 @@ function App() {
   const fetchProgramById = async (programId) => {
     try {
       const headers = getFetchHeaders();
-      const response = await fetch(`${API_BASE_URL}/programs/${programId}`, { headers });
+      const response = await fetch(buildApiUrl(`programs/${programId}`), { headers });
       
       if (!response.ok) {
         if (response.status === 404) {
@@ -613,12 +613,6 @@ function App() {
       console.error('Failed to fetch program:', err);
       throw err;
     }
-  };
-
-  const handleOpenProgram = (id) => {
-    console.log('Open program:', id);
-    // Navigate to shareable program link
-    navigate(`/program/${id}`);
   };
 
   const handleCloseProgramModal = () => {
@@ -810,7 +804,7 @@ function App() {
         }
 
         // Create a new program with the modified data
-        const programRes = await fetch(`${API_BASE_URL}/programs`, {
+        const programRes = await fetch(buildApiUrl('programs'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -840,7 +834,7 @@ function App() {
 
       // Save the program (original or modified copy) to vault
       if (programIdToSave) {
-        const response = await fetch(`${API_BASE_URL}/api/users/${currentUser._id}/saved-programs`, {
+        const response = await fetch(buildApiUrl(`api/users/${currentUser._id}/saved-programs`), {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -875,7 +869,7 @@ function App() {
 
     try {
       // Find the savedProgram entry for this program
-      const userRes = await fetch(`${API_BASE_URL}/getUsers`);
+      const userRes = await fetch(buildApiUrl('getUsers'));
       if (!userRes.ok) {
         throw new Error('Failed to fetch user data');
       }
@@ -898,7 +892,7 @@ function App() {
 
       // Delete the saved program entry
       const deleteRes = await fetch(
-        `${API_BASE_URL}/api/users/${currentUser._id}/saved-programs/${savedProgram._id}`,
+        buildApiUrl(`api/users/${currentUser._id}/saved-programs/${savedProgram._id}`),
         {
           method: 'DELETE',
           headers: {
