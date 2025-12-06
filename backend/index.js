@@ -32,8 +32,39 @@ if (!process.env.JWT_SECRET) {
     console.error("[STARTUP ERROR] Authentication will fail without JWT_SECRET");
 }
 
-// Middleware
-app.use(cors());
+// CORS Configuration
+// Set ALLOWED_ORIGINS in .env file (comma-separated for multiple origins)
+// For local development: http://localhost:5173,http://localhost:3000
+// For production: https://your-frontend-domain.com
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
+    : ['http://localhost:5173', 'http://localhost:3000']; // Default for local development
+
+console.log("[STARTUP] CORS Configuration:");
+console.log(`[STARTUP] Allowed Origins: ${allowedOrigins.join(', ')}`);
+if (!process.env.ALLOWED_ORIGINS) {
+    console.warn("[STARTUP WARNING] ALLOWED_ORIGINS not set in .env, using default localhost origins");
+    console.warn("[STARTUP WARNING] For production, set ALLOWED_ORIGINS in .env file");
+}
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.warn(`[CORS] Blocked request from origin: ${origin}`);
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // Allow cookies and authorization headers
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Database connection with detailed error handling

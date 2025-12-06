@@ -12,7 +12,33 @@ MONGO_URL=your_mongodb_connection_string
 PORT=8000
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
 JWT_EXPIRES_IN=7d
+
+# CORS Configuration (Security)
+# Comma-separated list of allowed origins
+# For local development: http://localhost:5173,http://localhost:3000
+# For production: https://your-frontend-domain.com
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
 ```
+
+### CORS Security Configuration
+
+The backend uses CORS (Cross-Origin Resource Sharing) to control which frontend domains can access the API. This is a critical security feature.
+
+**For Local Development:**
+- Default origins are `http://localhost:5173` and `http://localhost:3000`
+- You can override by setting `ALLOWED_ORIGINS` in your `.env` file
+
+**For Production:**
+- **IMPORTANT**: Set `ALLOWED_ORIGINS` to your production frontend domain(s)
+- Example: `ALLOWED_ORIGINS=https://your-app.com,https://www.your-app.com`
+- Multiple origins can be specified by separating them with commas
+- Never use `*` or allow all origins in production (security risk)
+
+**CORS Features:**
+- Validates origin on every request
+- Blocks unauthorized origins with logging
+- Supports credentials (cookies, authorization headers)
+- Allows standard HTTP methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 
 ## API Endpoints
 
