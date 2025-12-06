@@ -5,6 +5,7 @@ import MuscleSelection from '../MuscleSelection/MuscleSelection';
 import ExerciseSelection from '../ExerciseSelection/ExerciseSelection';
 import { idGenerator } from '../../utils/idGenerator';
 import './ProgramDetail.css';
+import '../JadwalBuilder/JadwalBuilder.css';
 
 const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditable = false, onModify, onSave, programId, onRatingSubmit, isFromVault = false, onDelete }) => {
   const [days, setDays] = React.useState(programData?.days || []);
@@ -33,6 +34,42 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
 
   const handleDayClick = (dayId) => {
     setActiveDayId(dayId);
+  };
+
+  const handleAddDay = () => {
+    if (!isEditable) return;
+    if (days.length < 7) {
+      const newDayId = idGenerator.getDayId();
+      setDays([...days, { id: newDayId, exercises: [] }]);
+      setActiveDayId(newDayId);
+    }
+  };
+
+  const handleDeleteDay = (dayId, e) => {
+    if (!isEditable) return;
+    e.stopPropagation();
+    const day = days.find(d => d.id === dayId);
+
+    if (day.exercises.length > 0) {
+      // For now, just delete - you can add confirmation dialog if needed
+    }
+    
+    const newDays = days.filter(d => d.id !== dayId);
+
+    // Renumber days sequentially for UI consistency
+    const renumberedDays = newDays.map((d, index) => ({ ...d, id: index + 1 }));
+
+    setDays(renumberedDays);
+
+    // Adjust active day
+    if (activeDayId === dayId) {
+      setActiveDayId(renumberedDays.length > 0 ? renumberedDays[0].id : 1);
+    } else if (activeDayId > dayId) {
+      setActiveDayId(activeDayId - 1);
+    }
+
+    // Reset day counter to account for renumbering
+    idGenerator.dayCounter = renumberedDays.length + 1;
   };
 
   const handleSave = () => {
@@ -270,17 +307,40 @@ const ProgramDetail = ({ programData, scheduleName, isEditable: initialIsEditabl
         </div>
 
         <div className="program-detail__toolbar">
-          <div className="program-detail__days">
+          <div className="jadwal-builder__days">
             {days.map((day) => (
-              <button
-                key={day.id}
-                type="button"
-                className={`program-detail__day-btn ${activeDayId === day.id ? 'is-active' : ''}`}
-                onClick={() => handleDayClick(day.id)}
-              >
-                Day {day.id}
-              </button>
+              <div key={day.id} className="jadwal-builder__day-wrapper">
+                <button
+                  type="button"
+                  className={`jadwal-builder__day-btn ${activeDayId === day.id ? 'is-active' : ''}`}
+                  onClick={() => handleDayClick(day.id)}
+                >
+                  Day {day.id}
+                  {isEditable && days.length > 1 && (
+                    <button
+                      type="button"
+                      className="jadwal-builder__day-delete"
+                      onClick={(e) => handleDeleteDay(day.id, e)}
+                      aria-label={`Delete Day ${day.id}`}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  )}
+                </button>
+              </div>
             ))}
+            {isEditable && days.length < 7 && (
+              <button
+                type="button"
+                className="jadwal-builder__add-day-btn"
+                onClick={handleAddDay}
+              >
+                + Add Day
+              </button>
+            )}
           </div>
           <div className="program-detail__actions">
             {!isEditable ? (
