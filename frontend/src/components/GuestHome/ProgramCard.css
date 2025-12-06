@@ -157,9 +157,10 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  min-height: 280px;
+  min-height: 320px;
   height: 100%;
   overflow: visible;
+  width: 100%;
 }
 
 .jadwal-program-card h3 {
@@ -170,8 +171,10 @@
   min-height: 3rem;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .jadwal-program-card p {
@@ -180,9 +183,16 @@
   flex: 1;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   min-height: 4.5rem;
+}
+
+/* Ensure empty description still shows space */
+.jadwal-program-card p:empty::before {
+  content: '\00a0'; /* Non-breaking space */
+  visibility: hidden;
 }
 
 .jadwal-program-card__meta {
@@ -191,6 +201,7 @@
   font-size: 0.85rem;
   margin-bottom: 0.75rem;
   flex-shrink: 0;
+  min-height: 1.5rem;
 }
 
 .jadwal-program-card__tags {
@@ -201,6 +212,13 @@
   list-style: none;
   margin: 0;
   flex-shrink: 0;
+  min-height: 1.5rem;
+}
+
+/* Ensure tags container takes space even if empty */
+.jadwal-program-card__tags:empty::before {
+  content: '\00a0'; /* Non-breaking space */
+  visibility: hidden;
 }
 
 .jadwal-program-card:hover,

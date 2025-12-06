@@ -207,7 +207,12 @@
 
 }
 
-.exercise-creation__add-set-btn:hover {
+.exercise-creation__add-set-btn:hover:not(:disabled) {
+}
+
+.exercise-creation__add-set-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .exercise-creation__notes {

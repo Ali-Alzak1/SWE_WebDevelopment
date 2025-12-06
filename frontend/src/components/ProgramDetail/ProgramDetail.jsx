@@ -3,7 +3,7 @@ import ExerciseCreation from '../ExerciseCreation/ExerciseCreation';
 import Rating from '../Rating/Rating';
 import './ProgramDetail.css';
 
-const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify, onSave, programId, onRatingSubmit }) => {
+const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify, onSave, programId, onRatingSubmit, isFromVault = false, onDelete }) => {
   const [days, setDays] = React.useState(programData?.days || []);
   const [activeDayId, setActiveDayId] = React.useState(days.length > 0 ? days[0].id : 1);
   const [name, setName] = React.useState(scheduleName || '');
@@ -144,6 +144,19 @@ const ProgramDetail = ({ programData, scheduleName, isEditable = false, onModify
             >
               Save to Vault
             </button>
+            {isFromVault && onDelete && (
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => {
+                  if (window.confirm('Are you sure you want to delete this program from your vault?')) {
+                    onDelete(programId);
+                  }
+                }}
+              >
+                Delete Program
+              </button>
+            )}
           </div>
         </div>
 

@@ -121,7 +121,8 @@ function ProgramPageWrapper({
   onSaveToVault,
   currentUser,
   isAuthenticated,
-  navigate
+  navigate,
+  onDeleteFromVault
 }) {
   const { id } = useParams();
   const [program, setProgram] = useState(null);
@@ -200,6 +201,9 @@ function ProgramPageWrapper({
 
   // If program has programInfo, show detail view
   if (program.programInfo && Array.isArray(program.programInfo.days) && program.programInfo.days.length > 0) {
+    // Check if program is in vault
+    const isFromVault = vaultItems.some(v => v.id === program.id);
+    
     return (
       <ProgramDetail
         programData={program.programInfo}
@@ -207,11 +211,17 @@ function ProgramPageWrapper({
         isEditable={false}
         programId={program.id}
         onModify={() => {
-          // Navigate to builder if user wants to modify
-          navigate('/');
+          // Navigate to builder with program data for modification
+          if (onModifyProgram) {
+            onModifyProgram(program.programInfo, program.id, program.title);
+          } else {
+            navigate('/');
+          }
         }}
         onSave={onSaveToVault}
         onRatingSubmit={onRatingSubmit}
+        isFromVault={isFromVault}
+        onDelete={onDeleteFromVault}
       />
     );
   }
@@ -704,6 +714,14 @@ function App() {
     setCurrentPage('jadwal-builder');
   };
 
+  const handleModifyProgram = (programData, programId, programTitle) => {
+    // Set the program data to be loaded in JadwalBuilder
+    setSelectedBuiltInProgram(programData);
+    setCurrentProgramId(programId);
+    navigate('/');
+    setCurrentPage('jadwal-builder');
+  };
+
   const handleSaveToVault = async (schedule) => {
     console.log('Saving to vault:', schedule);
 
@@ -739,6 +757,62 @@ function App() {
       console.error(err);
       // Use the error message from the response if available
       alert(`Failed to save schedule. Please try again. Error: ${err.message}`);
+    }
+  };
+
+  const handleDeleteFromVault = async (programId) => {
+    if (!currentUser?._id || !programId) {
+      return;
+    }
+
+    try {
+      // Find the savedProgram entry for this program
+      const userRes = await fetch(`${API_BASE_URL}/getUsers`);
+      if (!userRes.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+
+      const userData = await userRes.json();
+      const fullUser = userData.find(u => String(u._id) === String(currentUser._id));
+      
+      if (!fullUser || !Array.isArray(fullUser.savedPrograms)) {
+        throw new Error('User data not found');
+      }
+
+      const savedProgram = fullUser.savedPrograms.find(
+        sp => String(sp.programId) === String(programId)
+      );
+
+      if (!savedProgram) {
+        alert('Program not found in your vault');
+        return;
+      }
+
+      // Delete the saved program entry
+      const deleteRes = await fetch(
+        `${API_BASE_URL}/api/users/${currentUser._id}/saved-programs/${savedProgram._id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      if (!deleteRes.ok) {
+        const errorData = await deleteRes.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to delete program from vault');
+      }
+
+      alert('Program deleted from vault successfully!');
+      
+      // Refresh vault items and navigate to vault page
+      await refreshVaultItems();
+      navigate('/');
+      setCurrentPage('vault');
+    } catch (err) {
+      console.error('Failed to delete program from vault:', err);
+      alert(`Failed to delete program. Please try again. Error: ${err.message}`);
     }
   };
 
@@ -904,12 +978,11 @@ function App() {
                         isCustom={!selectedBuiltInProgram}
                         initialCategories={creationCategories}
                         initialScheduleName={
-                          selectedBuiltInProgram || currentProgramId
-                            ? (selectedBuiltInProgram?.title ||
-                               programs.find(p => p.id === currentProgramId)?.title || 
+                          currentProgramId
+                            ? (programs.find(p => p.id === currentProgramId)?.title || 
                                vaultItems.find(p => p.id === currentProgramId)?.title || 
                                '')
-                            : ''
+                            : (selectedBuiltInProgram?.title || '')
                         }
                         onSave={async (schedule) => {
                           console.log('Saving schedule to vault:', schedule);
@@ -977,10 +1050,22 @@ function App() {
                         isEditable={false}
                         programId={currentProgramId}
                         onModify={() => {
-                          setCurrentPage('jadwal-builder');
+                          // Get the program data from programs or vaultItems
+                          const programToModify = programs.find(p => p.id === currentProgramId) || 
+                                                   vaultItems.find(p => p.id === currentProgramId);
+                          if (programToModify && programToModify.programInfo) {
+                            handleModifyProgram(programToModify.programInfo, currentProgramId, programToModify.title);
+                          } else {
+                            // Use selectedBuiltInProgram as fallback
+                            handleModifyProgram(selectedBuiltInProgram, currentProgramId, 
+                              programs.find(p => p.id === currentProgramId)?.title || 
+                              vaultItems.find(p => p.id === currentProgramId)?.title || '');
+                          }
                         }}
                         onSave={handleSaveToVault}
                         onRatingSubmit={handleRatingSubmit}
+                        isFromVault={vaultItems.some(v => v.id === currentProgramId)}
+                        onDelete={handleDeleteFromVault}
                       />
                     )}
                     {currentPage === 'vault' && (
@@ -1061,6 +1146,8 @@ function App() {
                     currentUser={currentUser}
                     isAuthenticated={isAuthenticated}
                     navigate={navigate}
+                    onDeleteFromVault={handleDeleteFromVault}
+                    onModifyProgram={handleModifyProgram}
                   />
                 } 
               />

@@ -204,6 +204,7 @@ const ExerciseCreation = ({
             type="button"
             className="exercise-creation__add-set-btn"
             onClick={handleAddSet}
+            disabled={!isEditable}
           >
             Add Set
           </button>
