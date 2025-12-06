@@ -270,9 +270,13 @@ function App() {
     if (location.pathname === '/all-programs') {
       setCurrentPage('all-programs');
       setActiveKey('all-programs');
-    } else if (location.pathname === '/') {
-      setCurrentPage('home');
-      setActiveKey('home');
+    } else if (location.pathname === '/' || location.pathname === '') {
+      // Only reset to home if currentPage is not already set to account or vault
+      // This allows navigation to account/vault from other pages without resetting
+      if (currentPage !== 'account' && currentPage !== 'vault' && currentPage !== 'jadwal-builder') {
+        setCurrentPage('home');
+        setActiveKey('home');
+      }
     }
   }, [location.pathname]);
 
@@ -527,10 +531,15 @@ function App() {
       setCurrentProgramId(null);
       setCurrentPage('jadwal-builder');
     } else {
-      // For other pages, navigate to home and set the page state
-      // (since account, vault are shown within the home route)
-      navigate('/');
-      setCurrentPage(key);
+      // For other pages (account, vault), check if we're already on home route
+      // If already on home, just update the page state without navigating
+      // If on a different route (e.g., program page), navigate to home first
+      if (location.pathname === '/' || location.pathname === '') {
+        setCurrentPage(key);
+      } else {
+        navigate('/');
+        setCurrentPage(key);
+      }
     }
   };
 
