@@ -30,6 +30,8 @@ if (!PORT) {
 if (!process.env.JWT_SECRET) {
     console.error("[STARTUP ERROR] JWT_SECRET is not defined in environment variables");
     console.error("[STARTUP ERROR] Authentication will fail without JWT_SECRET");
+    console.error("[STARTUP ERROR] Please set JWT_SECRET in your .env file");
+    process.exit(1);
 }
 
 // CORS Configuration
