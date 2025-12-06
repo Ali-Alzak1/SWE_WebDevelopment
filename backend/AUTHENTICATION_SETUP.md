@@ -5,7 +5,12 @@ This document describes the authentication system that has been implemented for 
 
 ## Environment Variables Required
 
-Add these to your `.env` file:
+**Quick Start:** Copy `.env.example` to `.env` and fill in your actual values:
+```bash
+cp .env.example .env
+```
+
+Then add these values to your `.env` file:
 
 ```
 MONGO_URL=your_mongodb_connection_string

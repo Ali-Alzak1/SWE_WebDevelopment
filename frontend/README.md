@@ -457,7 +457,14 @@ git pull origin branch-name
 
 #### Environment Variables
 
-The application uses environment variables for API configuration. Create a `.env` file in the `frontend/` directory:
+The application uses environment variables for API configuration. 
+
+**Quick Start:** Copy `.env.example` to `.env` and update with your values:
+```bash
+cp .env.example .env
+```
+
+Or create a `.env` file in the `frontend/` directory with:
 
 ```bash
 # Backend API Base URL
@@ -465,6 +472,8 @@ The application uses environment variables for API configuration. Create a `.env
 # For production: https://your-api-domain.com
 VITE_API_BASE_URL=http://localhost:8000
 ```
+
+See `.env.example` for a complete template with documentation.
 
 **Important Notes:**
 - The `.env` file is gitignored and should not be committed to version control
