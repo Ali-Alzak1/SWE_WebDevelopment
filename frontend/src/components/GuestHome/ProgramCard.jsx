@@ -39,6 +39,9 @@ const ProgramCard = ({ program, onClick }) => {
           ))
         ) : null}
       </ul>
+      {program.author && (
+        <p className="jadwal-program-card__author">By {program.author}</p>
+      )}
     </button>
   );
 };
